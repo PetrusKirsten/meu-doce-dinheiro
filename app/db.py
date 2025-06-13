@@ -4,7 +4,7 @@ import os
 # Caminho para o arquivo .db
 DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'financas.db')
 
-def conectar():
+def connect():
     """Abre conexão com o banco de dados."""
     
     conn = sqlite3.connect(DB_PATH)
@@ -12,10 +12,10 @@ def conectar():
     return conn
 
 
-def criar_tabelas():
+def create_tables():
     """Cria as tabelas do banco (caso não existam)."""
     
-    conn = conectar()
+    conn = connect()
     cursor = conn.cursor()
 
     # Tabela de usuários

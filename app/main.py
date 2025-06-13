@@ -1,15 +1,9 @@
-from app.db import conectar, criar_tabelas
-
-def listar_tabelas():
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-    tabelas = cursor.fetchall()
-    for t in tabelas:
-        print(t["name"])
-    conn.close()
+from app.users import add_user, get_users
+from app.db import create_tables
 
 if __name__ == "__main__":
-    criar_tabelas()
-    print("Tabelas existentes no banco:")
-    listar_tabelas()
+    create_tables()
+
+    # Mostrar usuários
+    print("\n📋 Usuários cadastrados:")
+    get_users()

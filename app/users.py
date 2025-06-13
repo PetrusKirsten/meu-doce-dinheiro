@@ -1,9 +1,9 @@
-from app.db import conectar
+from app.db import connect
 
-def inserir_usuario(nome, usuario, avatar):
+def add_user(nome, usuario, avatar):
     """Insere um novo usuário no banco de dados."""
     
-    conn = conectar()
+    conn = connect()
     cursor = conn.cursor()
 
     try:
@@ -24,10 +24,13 @@ def inserir_usuario(nome, usuario, avatar):
         conn.close()
 
 
-def atualizar_usuario(usuario, novo_nome=None, novo_avatar=None):
-    """Atualiza nome e/ou avatar de um usuário, baseado no nome de usuário."""
+def update_user(usuario_atual, novo_nome=None, novo_usuario=None, novo_avatar=None):
+    """
+    Atualiza dados de um usuário existente.
+    É possível alterar: nome, nome de usuário, avatar.
+    """
     
-    conn = conectar()
+    conn = connect()
     cursor = conn.cursor()
 
     if novo_nome:
@@ -36,8 +39,18 @@ def atualizar_usuario(usuario, novo_nome=None, novo_avatar=None):
             UPDATE usuarios
             SET nome = ?
             WHERE usuario = ?
-            """, 
-            (novo_nome, usuario)
+            """,
+            (novo_nome, usuario_atual)
+        )
+
+    if novo_usuario:
+        cursor.execute(
+            """
+            UPDATE usuarios
+            SET usuario = ?
+            WHERE usuario = ?
+            """,
+            (novo_usuario, usuario_atual)
         )
 
     if novo_avatar:
@@ -46,20 +59,20 @@ def atualizar_usuario(usuario, novo_nome=None, novo_avatar=None):
             UPDATE usuarios
             SET avatar = ?
             WHERE usuario = ?
-            """, 
-            (novo_avatar, usuario)
+            """,
+            (novo_avatar, usuario_atual)
         )
 
     conn.commit()
     conn.close()
+    
+    print(f"🛠 Usuário '{usuario_atual}' atualizado com sucesso!")
 
-    print(f"🛠 Usuário '{usuario}' atualizado com sucesso!")
 
-
-def listar_usuarios():
+def get_users():
     """Mostra todos os usuários cadastrados."""
     
-    conn = conectar()
+    conn = connect()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM usuarios")
     usuarios = cursor.fetchall()
