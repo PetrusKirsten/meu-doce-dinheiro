@@ -1,3 +1,8 @@
+"""
+Autor: Petrus Kirsten
+Propósito: Gerencia a conexão com o banco de dados e a criação das tabelas.
+"""
+
 import sqlite3
 import os
 

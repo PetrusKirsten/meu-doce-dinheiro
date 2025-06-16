@@ -1,4 +1,10 @@
-from app.db import get_cursor
+"""
+Autor: Petrus Kirsten
+Propósito: Funções para manipulação das categorias financeiras.
+"""
+
+from app.db     import get_cursor
+from app.utils  import exibir_tabela
 
 
 def add_categoria(name, metodo_pgto):
@@ -30,15 +36,12 @@ def get_categories():
     conn, cursor = get_cursor()
 
     cursor.execute("SELECT * FROM categorias")
-    categories = cursor.fetchall()
-
-    print("\n📋 Categorias:")
-    for cat in categories:
-        print(f"{cat['id']} - {cat['nome']} ({cat['metodo_pgto']})")
-    
+    categorias = cursor.fetchall()
     conn.close()
 
+    exibir_tabela("Categorias", categorias, ["id", "nome", "metodo_pgto"])
 
+    
 def update_category(nome_atual, nome_novo=None, novo_metodo_pgto=None):
     """Atualiza nome e/ou tipo de pagamento de uma categoria."""
     
@@ -58,7 +61,7 @@ def update_category(nome_atual, nome_novo=None, novo_metodo_pgto=None):
         cursor.execute(
             """
             UPDATE categorias
-            SET payment_type = ?
+            SET metodo_pgto  = ?
             WHERE nome = ?
             """,
             (novo_metodo_pgto, nome_atual)

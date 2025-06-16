@@ -1,5 +1,10 @@
-from app.db import get_cursor
+"""
+Autor: Petrus Kirsten
+Propósito: Funções relacionadas ao cadastro e atualização de usuários.
+"""
 
+from app.db     import get_cursor
+from app.utils  import exibir_tabela
 
 def add_user(nome, usuario, avatar):
     """Insere um novo usuário no banco de dados."""
@@ -68,15 +73,13 @@ def atualizar_user(usuario_atual, novo_nome=None, novo_usuario=None, novo_avatar
     print(f"🛠 Usuário '{usuario_atual}' atualizado com sucesso!")
 
 
-def listar_users():
+def get_users():
     """Mostra todos os usuários cadastrados."""
     
     conn, cursor = get_cursor()
 
     cursor.execute("SELECT * FROM usuarios")
     usuarios = cursor.fetchall()
-    for u in usuarios:
-        print(f"{u['id']} - {u['nome']} ({u['usuario']})")
-
     conn.close()
 
+    exibir_tabela("Usuários", usuarios, ["id", "nome", "usuario"])
