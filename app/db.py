@@ -7,16 +7,25 @@ DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'financas.db')
 def connect():
     """Abre conexão com o banco de dados."""
     
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row  # permite acessar colunas por nome
-    return conn
+    connection = sqlite3.connect(DB_PATH)
+    connection.row_factory = sqlite3.Row  # permite acessar colunas por nome
+
+    return connection
 
 
-def create_tables():
+def get_cursor():
+    """Abre conexão com o banco de dados e retorna seu cursor."""
+    
+    connection = connect()
+    cursor = connection.cursor()
+
+    return connection, cursor
+
+
+def criar_tabelas():
     """Cria as tabelas do banco (caso não existam)."""
     
-    conn = connect()
-    cursor = conn.cursor()
+    conn, cursor = get_cursor()
 
     # Tabela de usuários
     cursor.execute("""
@@ -33,7 +42,7 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS categorias (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
-        tipo TEXT CHECK(tipo IN ('débito', 'crédito', 'ambos')) NOT NULL
+        metodo_pgto TEXT CHECK(metodo_pgto IN ('débito', 'crédito', 'ambos')) NOT NULL
     )
     """)
 

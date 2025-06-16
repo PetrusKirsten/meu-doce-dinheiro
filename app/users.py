@@ -1,10 +1,10 @@
-from app.db import connect
+from app.db import get_cursor
+
 
 def add_user(nome, usuario, avatar):
     """Insere um novo usuário no banco de dados."""
     
-    conn = connect()
-    cursor = conn.cursor()
+    conn, cursor = get_cursor()
 
     try:
         cursor.execute(
@@ -24,14 +24,13 @@ def add_user(nome, usuario, avatar):
         conn.close()
 
 
-def update_user(usuario_atual, novo_nome=None, novo_usuario=None, novo_avatar=None):
+def atualizar_user(usuario_atual, novo_nome=None, novo_usuario=None, novo_avatar=None):
     """
     Atualiza dados de um usuário existente.
     É possível alterar: nome, nome de usuário, avatar.
     """
     
-    conn = connect()
-    cursor = conn.cursor()
+    conn, cursor = get_cursor()
 
     if novo_nome:
         cursor.execute(
@@ -69,14 +68,15 @@ def update_user(usuario_atual, novo_nome=None, novo_usuario=None, novo_avatar=No
     print(f"🛠 Usuário '{usuario_atual}' atualizado com sucesso!")
 
 
-def get_users():
+def listar_users():
     """Mostra todos os usuários cadastrados."""
     
-    conn = connect()
-    cursor = conn.cursor()
+    conn, cursor = get_cursor()
+
     cursor.execute("SELECT * FROM usuarios")
     usuarios = cursor.fetchall()
     for u in usuarios:
         print(f"{u['id']} - {u['nome']} ({u['usuario']})")
+
     conn.close()
 
