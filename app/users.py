@@ -6,6 +6,7 @@ Propósito: Funções relacionadas ao cadastro e atualização de usuários.
 from app.db     import get_cursor
 from app.utils  import exibir_tabela
 
+
 def add_user(nome, usuario, avatar):
     """Insere um novo usuário no banco de dados."""
     

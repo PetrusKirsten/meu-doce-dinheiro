@@ -4,9 +4,17 @@ Propósito: Funções auxiliares de utilidade geral, como resetar o banco de dad
 """
 
 def reset_db():
+    import os
     from app.db         import get_cursor
     from app.users      import add_user
     from app.categories import add_categoria
+
+    caminho_db = "data/financas.db"
+    if os.path.exists(caminho_db):
+        os.remove(caminho_db)
+        print("🗑️ Banco de dados removido com sucesso!")
+    else:
+        print("⚠️ Banco de dados não encontrado para resetar.")
 
     conn, cursor = get_cursor()
 
@@ -90,3 +98,37 @@ def exibir_tabela(titulo, dados, colunas):
     print("-" * len(cabecalho))
 
     print()
+
+from app.users      import add_user
+from app.categories import add_categoria
+
+def popular_db():
+    print("🚀 Inserindo dados iniciais...")
+
+    # Usuários fictícios
+    add_user("Petrus", "PP",     "🧔")
+    add_user("Mel",    "_memel", "👩")
+    add_user("Casal",  "nos2",   "💑")
+
+    # Categorias padrão
+    categorias = [
+        ("Alimentação",     "ambos"),
+        ("Investimentos",   "débito"),
+        ("Moradia",         "ambos"),
+        ("Pessoal",         "ambos"),
+        ("Presentes",       "ambos"),
+        ("Saúde",           "ambos"),
+        ("Taxas",           "ambos"),
+        ("Transporte",      "ambos"),
+        ("Viagens",         "ambos"),
+        ("Casamento",       "ambos"),
+        ("Pgto. de fatura", "débito"),
+        ("Pagamento",       "ambos"),
+        ("Juros",           "ambos"),
+        ("Outros",          "ambos")
+    ]
+
+    for nome, metodo in categorias:
+        add_categoria(nome, metodo)
+
+    print("✅ Dados inseridos com sucesso!")
