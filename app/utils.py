@@ -3,9 +3,12 @@ Autor: Petrus
 Propósito: Funções auxiliares de utilidade geral, como resetar o banco de dados.
 """
 
-def reset_db():
+def recriar_db():
+    """
+    Deleta o banco, recria as tabelas e popula com dados iniciais.
+    """
     import os
-    from app.db         import get_cursor
+    from app.db         import criar_tabelas
     from app.users      import add_user
     from app.categories import add_categoria
 
@@ -16,22 +19,18 @@ def reset_db():
     else:
         print("⚠️ Banco de dados não encontrado para resetar.")
 
-    conn, cursor = get_cursor()
+    # Agora sim: cria estrutura nova
+    criar_tabelas()
 
-    # Limpa todas as tabelas
-    tabelas = ['transacoes', 'planejamentos', 'usuarios', 'categorias']
-    for tabela in tabelas:
-        cursor.execute(f"DELETE FROM {tabela}")
-        cursor.execute(f"DELETE FROM sqlite_sequence WHERE name='{tabela}'")  # reseta AUTOINCREMENT
-    conn.commit()
-    print("\n🧹 Tabelas limpas e IDs resetados.\n")
+    print("🚀 Inserindo dados iniciais...")
 
-    # Recria usuários iniciais
-    add_user("PP",    "petrus279", None)
-    add_user("Memel", "_memel", None)
+    # Usuários
+    add_user("Petrus", "PP",     "🧔")
+    add_user("Mel",    "_memel", "👩")
+    add_user("Casal",  "nos2",   "💑")
 
-    # Recria categorias
-    categorias_padrao = [
+    # Categorias
+    categorias = [
         ("Alimentação",     "ambos"),
         ("Investimentos",   "débito"),
         ("Moradia",         "ambos"),
@@ -47,11 +46,10 @@ def reset_db():
         ("Juros",           "ambos"),
         ("Outros",          "ambos")
     ]
-    for nome, metodo in categorias_padrao:
+    for nome, metodo in categorias:
         add_categoria(nome, metodo)
-    print("\n📦 Dados padrão recriados com sucesso!")
-    
-    conn.close()
+
+    print("✅ Banco recriado e dados inseridos com sucesso!")
 
 
 def exibir_tabela(titulo, dados, colunas):
@@ -85,7 +83,10 @@ def exibir_tabela(titulo, dados, colunas):
         for col in colunas:
             valor = linha[col]
         
-            if isinstance(valor, str) and col not in ['nome', 'usuario']:
+            if col == "compartilhada":
+                valor = "Sim" if valor else "Não"
+
+            elif isinstance(valor, str) and col not in ['nome', 'usuario']:
                 valor = valor.capitalize()
             
             elif isinstance(valor, float):
@@ -99,10 +100,11 @@ def exibir_tabela(titulo, dados, colunas):
 
     print()
 
-from app.users      import add_user
-from app.categories import add_categoria
 
 def popular_db():
+    from app.users      import add_user
+    from app.categories import add_categoria
+    
     print("🚀 Inserindo dados iniciais...")
 
     # Usuários fictícios

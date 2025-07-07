@@ -36,10 +36,13 @@ def get_categories():
     conn, cursor = get_cursor()
 
     cursor.execute("SELECT * FROM categorias")
-    categorias = cursor.fetchall()
+
+    colunas = [col[0] for col in cursor.description]
+    dados   = [dict(zip(colunas, linha)) for linha in cursor.fetchall()]
+
     conn.close()
 
-    exibir_tabela("Categorias", categorias, ["id", "nome", "metodo_pgto"])
+    return dados
 
     
 def update_category(nome_atual, nome_novo=None, novo_metodo_pgto=None):

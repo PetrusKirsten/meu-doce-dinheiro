@@ -80,7 +80,10 @@ def get_users():
     conn, cursor = get_cursor()
 
     cursor.execute("SELECT * FROM usuarios")
-    usuarios = cursor.fetchall()
-    conn.close()
 
-    exibir_tabela("Usuários", usuarios, ["id", "nome", "usuario"])
+    colunas = [col[0] for col in cursor.description]
+    dados   = [dict(zip(colunas, linha)) for linha in cursor.fetchall()]
+
+    conn.close()
+    
+    return dados
