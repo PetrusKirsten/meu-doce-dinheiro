@@ -16,7 +16,7 @@ def recriar_db():
     caminho_db = "data/financas.db"
     if os.path.exists(caminho_db):
         os.remove(caminho_db)
-        print("🗑️ Banco de dados removido com sucesso!")
+        print("🗑️  Banco de dados removido com sucesso!")
     else:
         print("⚠️ Banco de dados não encontrado para resetar.")
 
@@ -50,7 +50,7 @@ def recriar_db():
     for nome, metodo in categorias:
         add_categoria(nome, metodo)
 
-    print("✅ Banco recriado e dados inseridos com sucesso!")
+    print("🔄 Banco recriado e dados inseridos com sucesso!")
 
 # Função para exibir uma tabela formatada no console
 def exibir_tabela(titulo, dados, colunas):

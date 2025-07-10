@@ -1,6 +1,6 @@
 # config.py
 
-VERSAO      = "0.1.0"
+VERSAO      = "0.1.1"
 NOME_APP    = "Meu Doce Dinheiro"
 DESCRICAO   = "Gerenciador pessoal de finanças simples e eficiente 💸"
 AUTOR       = "Petrus K."

@@ -7,6 +7,15 @@ e usa [SemVer](https://semver.org/lang/pt-BR/) para versionamento.
 
 ---
 
+## [0.1.1] – 2025-07-10
+
+### Refactor
+
+- Aprimorar mensagens de saída nas funções de reset do banco de dados.
+- Ajustar duração do `sleep` no menu.
+
+---
+
 ## [0.1.0] - 2025-07-10
 
 ### Adicionado

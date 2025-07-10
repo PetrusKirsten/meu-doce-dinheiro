@@ -39,7 +39,7 @@ def init_banner():
     print(f"📝  {DESCRICAO}")
     print("-"*58 + "\n")
 
-    time.sleep(1)
+    time.sleep(0.5)
 
 # Função para normalizar texto (remover acentos e converter para minúsculo)
 def normalizar(texto):
@@ -207,6 +207,7 @@ def menu():
             from app.utils import recriar_db
             print("\n⚠️  Resetando banco de dados...")
             recriar_db()
+            print()
 
         elif escolha == "0":
             print("👋 Até mais!\n" \
