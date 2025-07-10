@@ -9,20 +9,100 @@ e gerenciar o banco de dados local de forma interativa.
 Execução: python app.py
 """
 
+import time
+import unicodedata
 
+# Importa módulos do app
 from app.db           import criar_tabelas
-from app.utils        import popular_db, exibir_tabela
+from app.utils        import exibir_tabela, validar_data
 from app.users        import get_users
 from app.categories   import get_categories
 from app.transactions import get_transactions, add_transacao
 
+# Definições de tipos de transações
+FORMAS_PGTO_VALIDAS = ["débito", "crédito", "pix", "dinheiro", "outro"]
+
 # Inicializa o banco e garante que as tabelas existam
 criar_tabelas()
 
+# ==================
+# Funções auxiliares
+# ==================
 
+# Função para mostrar boas-vindas e informações do aplicativo
+def init_banner():
+    from config import NOME_APP, VERSAO, DESCRICAO, AUTOR
+
+    print("\n" + "-"*58)
+    print(f"🧾  {NOME_APP.upper()} - v{VERSAO}")
+    print(f"👤  Autor: {AUTOR}")
+    print(f"📝  {DESCRICAO}")
+    print("-"*58 + "\n")
+
+    time.sleep(1)
+
+# Função para normalizar texto (remover acentos e converter para minúsculo)
+def normalizar(texto):
+    """Remove acentos e converte pra minúsculo."""
+    return unicodedata.normalize('NFKD', texto).encode('ASCII', 'ignore').decode().lower()
+
+# Função para escolher uma opção de lista
+def escolher_opcao(nome_campo, opcoes_validas):
+    """
+    Solicita ao usuário um valor, validando contra uma lista de opções válidas.
+    Aceita variações sem acento ou maiúsculas.
+    Retorna a string padronizada encontrada.
+    """
+
+    while True:
+        entrada = input(f"🔸 {nome_campo}: ").strip().lower(); print("-"*40)
+        entrada_normalizada = normalizar(entrada)
+
+        for opcao in opcoes_validas:
+            if normalizar(opcao) == entrada_normalizada:
+                return opcao  # ✅ retorna a string original da lista
+
+        print(f"\n❌ {nome_campo} inválido. Opções válidas:")
+        for opcao in opcoes_validas:
+            print(f"   • {opcao.capitalize()}")
+        print()
+
+# Função para escolher um item de uma lista de dicionários
+def escolher_item(titulo, lista, campo_busca=["nome"], campo_retorno="id", mostrar_tabela=None):
+    """
+    Permite ao usuário escolher um item de uma lista de dicionários digitando um valor de busca.
+
+    Parâmetros:
+    - titulo: nome exibido ao usuário ("Usuário", "Categoria", etc.)
+    - lista: lista de dicionários (ex: [{"id": 1, "nome": "Petrus", "usuario": "PP"}])
+    - campo_busca: campos aceitos como entrada (ex: ["nome", "usuario"])
+    - campo_retorno: valor retornado (normalmente o "id")
+    - mostrar_tabela: função de exibição (ex: exibir_tabela), chamada em caso de erro
+    """
+    
+    while True:
+        entrada = input(f"🔸 {titulo}: ").strip().lower(); print("-"*40)
+        entrada_normalizada = normalizar(entrada)
+
+
+        for item in lista:
+            for campo in campo_busca:
+                if entrada_normalizada == normalizar(str(item[campo]).lower()):
+                    return item[campo_retorno]
+
+        print(f"\n❌ {titulo} não encontrado. Tente novamente.")
+        if mostrar_tabela:
+            mostrar_tabela(titulo, lista, list(lista[0].keys()))
+        print()
+
+# ====================================
+# Função principal do menu interativo
+# ====================================
 def menu():
     while True:
-        print("\n" + "="*40)
+        time.sleep(1)
+
+        print("="*40)
         print("💰  MEU DOCE DINHEIRO - MENU PRINCIPAL")
         print("="*40)
         print("1️⃣  Listar usuários")
@@ -33,7 +113,7 @@ def menu():
         print("0️⃣  Sair")
         print("-"*40)
 
-        escolha = input("🔸 Escolha uma opção: ").strip()
+        escolha = input("🔸 Escolha uma opção: ").strip(); print("-"*40)
 
         if escolha == "1":
             usuarios = get_users()
@@ -90,42 +170,29 @@ def menu():
                 print("\n📥 Adicionar nova transação")
                 print("-"*40)
 
-                valor         = float(input("💸 Valor (R$): "))
-                tipo          = input("📌 Tipo (renda/despesa): ").strip().lower()
-                forma         = input("💳 Forma de pagamento: ").strip().lower()
-                descricao     = input("📝 Descrição: ")
-                data          = input("📅 Data (YYYY-MM-DD): ")
-
-                usuarios   = get_users()
-                usuario_id = None
-                while usuario_id is None:
-                    usuario_input = input("🙋 Digite o nome ou usuário: ").strip().lower()
-                    usuario_id    = next(
-                        (u["id"] for u in usuarios 
-                         if usuario_input in [u["nome"].lower(), u["usuario"].lower()]),
-                        None)
-                    if usuario_id is None:
-                        print("❌ Usuário não encontrado. Veja a lista disponível:\n")
-                        exibir_tabela("Usuários", usuarios, ["id", "nome", "usuario"])
-                
-                categorias   = get_categories()
-                categoria_id = None
-                while categoria_id is None:
-                    categoria_input = input("🏷️  Digite o nome da categoria: ").strip().lower()
-                    categoria_id    = next(
-                        (c["id"] for c in categorias 
-                            if categoria_input == c["nome"].lower()),
-                        None)
-                    if categoria_id is None:
-                        print("❌ Categoria não encontrada. Veja a lista disponível:\n")
-                        exibir_tabela("Categorias", categorias, ["id", "nome", "metodo_pgto"])
-
-                compartilhada = input("🤝 Compartilhada? (s/n): ").strip().lower() == "s"
+                valor         = float(input("💸 Valor (R$): ")); print("-"*40)
+                tipo          = input("📌 Tipo (renda/despesa): ").strip().lower(); print("-"*40)
+                forma_pgto    = escolher_opcao("Forma de pagamento", FORMAS_PGTO_VALIDAS)
+                usuario_id    = escolher_item(
+                    titulo         = "Usuário",
+                    lista          = get_users(),
+                    campo_busca    = ["nome", "usuario"],
+                    campo_retorno  = "id",
+                    mostrar_tabela = exibir_tabela)
+                categoria_id  = escolher_item(
+                    titulo         = "Categoria",
+                    lista          = get_categories(),
+                    campo_busca    = ["nome"],
+                    campo_retorno  = "id",
+                    mostrar_tabela = exibir_tabela)
+                descricao     = input("📝 Descrição: "); print("-"*40)
+                data          = validar_data(); print("-"*40)
+                compartilhada = input("🤝 Compartilhada? (s/n): ").strip().lower() == "s"; print("-"*40)
 
                 add_transacao(
                     valor,
                     tipo,
-                    forma,
+                    forma_pgto,
                     descricao,
                     data,
                     usuario_id,
@@ -142,12 +209,16 @@ def menu():
             recriar_db()
 
         elif escolha == "0":
-            print("\n👋 Até mais! Obrigado por usar o Meu Doce Dinheiro.")
+            print("👋 Até mais!\n" \
+                  "💚 Obrigado por usar o Meu Doce Dinheiro."); print("-"*40)
+            time.sleep(1)
+            print()
             break
 
         else:
-            print("❌ Opção inválida. Tente novamente.")
+            print("❌ Opção inválida. Tente novamente."); print("-"*40)
 
 
 if __name__ == "__main__":
+    init_banner()
     menu()

@@ -51,22 +51,6 @@ def criar_tabelas():
     )
     """)
 
-    # Tabela de transações
-    # cursor.execute("""
-    # CREATE TABLE IF NOT EXISTS transacoes (
-    #     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    #     usuario_id INTEGER NOT NULL,
-    #     data TEXT NOT NULL,
-    #     valor REAL NOT NULL,
-    #     descricao TEXT,
-    #     categoria_id INTEGER NOT NULL,
-    #     tipo TEXT CHECK(tipo IN ('débito', 'crédito')) NOT NULL,
-    #     compartilhado BOOLEAN DEFAULT 0,
-    #     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    #     FOREIGN KEY (categoria_id) REFERENCES categorias(id)
-    # )
-    # """)
-
     # Tabela de planejamentos
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS planejamentos (

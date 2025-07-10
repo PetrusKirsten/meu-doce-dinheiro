@@ -3,6 +3,7 @@ Autor: Petrus
 Propósito: Funções auxiliares de utilidade geral, como resetar o banco de dados.
 """
 
+# Função para recriar o banco de dados
 def recriar_db():
     """
     Deleta o banco, recria as tabelas e popula com dados iniciais.
@@ -51,7 +52,7 @@ def recriar_db():
 
     print("✅ Banco recriado e dados inseridos com sucesso!")
 
-
+# Função para exibir uma tabela formatada no console
 def exibir_tabela(titulo, dados, colunas):
     """
     Exibe uma tabela formatada no console com cabeçalhos alinhados.
@@ -100,7 +101,7 @@ def exibir_tabela(titulo, dados, colunas):
 
     print()
 
-
+# Função para popular o banco com dados iniciais
 def popular_db():
     from app.users      import add_user
     from app.categories import add_categoria
@@ -134,3 +135,29 @@ def popular_db():
         add_categoria(nome, metodo)
 
     print("✅ Dados inseridos com sucesso!")
+
+# Função para validar e formatar uma data
+def validar_data(texto=None):
+    """
+    Solicita uma data do usuário e valida.
+    Retorna no formato 'YYYY-MM-DD'.
+    Se 'texto' for passado, valida direto.
+    """
+    from datetime import datetime
+
+    formatos_validos = ["%Y-%m-%d", "%d/%m/%Y", "%Y/%m/%d", "%Y.%m.%d", "%d-%m-%Y"]
+
+    while True:
+        if not texto:
+            texto = input("📅 Data (YYYY-MM-DD ou DD/MM/AAAA): ").strip()
+
+        for fmt in formatos_validos:
+            try:
+                dt = datetime.strptime(texto, fmt)
+                return dt.strftime("%Y-%m-%d")
+            except ValueError:
+                continue
+
+        print("❌ Data inválida. Tente novamente.\n")
+        texto = None  # força novo input
+
