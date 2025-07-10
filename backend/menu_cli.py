@@ -12,7 +12,7 @@ Execução: python app.py
 import time
 import unicodedata
 
-# Importa módulos do app
+# Importa módulos internos do app
 from app.db           import criar_tabelas
 from app.utils        import exibir_tabela, validar_data
 from app.users        import get_users
@@ -210,8 +210,8 @@ def menu():
             print()
 
         elif escolha == "0":
-            print("👋 Até mais!\n" \
-                  "💚 Obrigado por usar o Meu Doce Dinheiro."); print("-"*40)
+            print("💚 Obrigado por usar o Meu Doce Dinheiro\n" \
+                  "👋 Até mais!"); print("-"*40)
             time.sleep(1)
             print()
             break
