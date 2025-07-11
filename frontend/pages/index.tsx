@@ -14,6 +14,7 @@ import CategoryPieChart from "../components/CategoryPieChart";
 
 
 export default function Home() {
+  
   const [loading, setLoading]           = useState(true);
   const [users, setUsers]               = useState<User[]>([]);
   const [categories, setCategories]     = useState<Category[]>([]);
