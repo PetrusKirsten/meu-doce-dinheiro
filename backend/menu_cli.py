@@ -13,7 +13,7 @@ import time
 import unicodedata
 
 # Importa módulos internos do app
-from app.db           import criar_tabelas
+from backend.app.scripts.db           import criar_tabelas
 from app.utils        import exibir_tabela, validar_data
 from app.users        import get_users
 from app.categories   import get_categories

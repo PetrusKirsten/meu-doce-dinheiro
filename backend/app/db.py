@@ -1,85 +1,21 @@
-"""
-Autor: Petrus Kirsten
-Propósito: Gerencia a conexão com o banco de dados e a criação das tabelas.
-"""
-
-import sqlite3
 import os
+from pathlib import Path
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Caminho para o arquivo .db
-DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'financas.db')
+# Pega a raiz do projeto (pastas acima de "app")
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-def connect():
-    """Abre conexão com o banco de dados."""
-    
-    connection = sqlite3.connect(DB_PATH)
-    connection.row_factory = sqlite3.Row  # permite acessar colunas por nome
+# Garante que exista a pasta data/
+(Path(BASE_DIR) / "data").mkdir(exist_ok=True)
 
-    return connection
+# Monta o caminho completo para o .db
+DATABASE_PATH = BASE_DIR / "data" / "financas.db"
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
 
-
-def get_cursor():
-    """Abre conexão com o banco de dados e retorna seu cursor."""
-    
-    connection = connect()
-    cursor = connection.cursor()
-
-    return connection, cursor
-
-
-def criar_tabelas():
-    """Cria as tabelas do banco (caso não existam)."""
-    
-    conn, cursor = get_cursor()
-
-    # Tabela de usuários
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS usuarios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        usuario TEXT UNIQUE NOT NULL,
-        avatar TEXT
-    )
-    """)
-
-    # Tabela de categorias
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS categorias (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        metodo_pgto TEXT CHECK(metodo_pgto IN ('débito', 'crédito', 'ambos')) NOT NULL
-    )
-    """)
-
-    # Tabela de planejamentos
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS planejamentos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        usuario_id INTEGER NOT NULL,
-        categoria_id INTEGER NOT NULL,
-        mes TEXT NOT NULL,
-        valor_planejado REAL NOT NULL,
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-        FOREIGN KEY (categoria_id) REFERENCES categorias(id)
-    )
-    """)
-
-    # Tabela de transações
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS transacoes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            valor REAL NOT NULL,
-            tipo TEXT CHECK(tipo IN ('renda', 'despesa')) NOT NULL,
-            forma_pagamento TEXT CHECK(forma_pagamento IN ('débito', 'crédito', 'pix', 'dinheiro', 'outro')) NOT NULL,
-            descricao TEXT,
-            data TEXT NOT NULL,
-            compartilhada BOOLEAN DEFAULT 0,
-            usuario_id INTEGER NOT NULL,
-            categoria_id INTEGER NOT NULL,
-            FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-            FOREIGN KEY (categoria_id) REFERENCES categorias(id)
-        )
-    """)
-
-    conn.commit()
-    conn.close()
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()

@@ -3,7 +3,7 @@ Autor: Petrus Kirsten
 Propósito: Funções para registrar, listar e filtrar transações financeiras (despesas e receitas).
 """
 
-from app.db import get_cursor
+from backend.app.scripts.db import get_cursor
 
 
 def add_transacao(valor, 

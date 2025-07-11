@@ -3,7 +3,7 @@ Autor: Petrus Kirsten
 Propósito: Funções para manipulação das categorias financeiras.
 """
 
-from app.db     import get_cursor
+from backend.app.scripts.db     import get_cursor
 from app.utils  import exibir_tabela
 
 

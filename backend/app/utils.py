@@ -9,7 +9,7 @@ def recriar_db():
     Deleta o banco, recria as tabelas e popula com dados iniciais.
     """
     import os
-    from app.db         import criar_tabelas
+    from backend.app.scripts.db         import criar_tabelas
     from app.users      import add_user
     from app.categories import add_categoria
 

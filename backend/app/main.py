@@ -1,30 +1,66 @@
-"""
-Autor: Petrus Kirsten
-Propósito: Arquivo principal para executar e testar as funcionalidades do sistema.
-"""
+from . import db
+from . import models, crud, schemas
 
-from app.db           import criar_tabelas
-from app.utils        import exibir_tabela, reset_db, popular_db
-from app.users        import get_users
-from app.categories   import get_categories
-from app.transactions import get_transacoes, get_transactions
+from fastapi        import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
 
 
-if __name__ == "__main__":
-    # reset_db()
-    # popular_db()
-    criar_tabelas()
+app = FastAPI(title="Meu Doce Dinheiro API")
 
-    get_users()    
-    get_categories()
-    get_transacoes()
-    transacoes = get_transactions(usuario_id=1, mes="2025-06")
-    
-    exibir_tabela(
-        "Transações de Junho do Petrus", 
-        transacoes, 
-        [
-            "id", "valor", "tipo", "forma_pagamento",
-            "data", "descricao", "usuario", "categoria", "compartilhada"
-        ]
-    )
+# Garante que as tabelas existam
+models.Base.metadata.create_all(bind=db.engine)
+
+# Dependência para obter a sessão do banco
+def get_db():
+    session = db.SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
+# ------ Usuários ------
+
+@app.post("/users/", response_model=schemas.User)
+def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
+    return crud.create_user(db, user_in)
+
+@app.get("/users/", response_model=list[schemas.User])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_users(db, skip, limit)
+
+@app.get("/users/{user_id}", response_model=schemas.User)
+def read_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id)
+    if not db_user:
+        raise HTTPException(404, detail="User not found")
+    return db_user
+
+
+# ------ Categorias ------
+
+@app.post("/categories/", response_model=schemas.Category)
+def create_category(cat_in: schemas.CategoryCreate, db: Session = Depends(get_db)):
+    return crud.create_category(db, cat_in)
+
+@app.get("/categories/", response_model=list[schemas.Category])
+def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_categories(db, skip, limit)
+
+
+# ------ Transações ------
+
+@app.post("/transactions/", response_model=schemas.Transaction)
+def create_transaction(tx_in: schemas.TransactionCreate, db: Session = Depends(get_db)):
+    return crud.create_transaction(db, tx_in)
+
+@app.get("/transactions/", response_model=list[schemas.Transaction])
+def read_transactions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_transactions(db, skip, limit)
+
+@app.get("/transactions/{tx_id}", response_model=schemas.Transaction)
+def read_transaction(tx_id: int, db: Session = Depends(get_db)):
+    db_tx = crud.get_transaction(db, tx_id)
+    if not db_tx:
+        raise HTTPException(404, detail="Transaction not found")
+    return db_tx

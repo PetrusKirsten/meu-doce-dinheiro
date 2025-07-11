@@ -3,7 +3,7 @@ Autor: Petrus Kirsten
 Propósito: Funções relacionadas ao cadastro e atualização de usuários.
 """
 
-from app.db     import get_cursor
+from backend.app.scripts.db     import get_cursor
 from app.utils  import exibir_tabela
 
 
