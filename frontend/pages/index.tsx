@@ -1,7 +1,15 @@
 // frontend/pages/index.tsx
 import { useEffect, useState } from "react";
-import { getUsers, getCategories, getTransactions, User, Category, Transaction } from "../lib/api";
-
+import {
+  getUsers,
+  getCategories,
+  getTransactions,
+  getMonthlyBalance,
+  User,
+  Category,
+  Transaction,
+  MonthlyBalance
+} from "../lib/api";
 import CategoryPieChart from "../components/CategoryPieChart";
 
 
