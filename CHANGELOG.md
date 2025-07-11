@@ -7,6 +7,20 @@ e usa [SemVer](https://semver.org/lang/pt-BR/) para versionamento.
 
 ---
 
+## [0.2.1]
+
+### Test
+
+- Adicionar testes de unidade para as funções de CRUD do backend usando pytest.
+- Adicionar testes de integração para endpoints FastAPI com TestClient e SQLite in-memory.
+- Configurar `conftest.py` com `StaticPool` para isolamento dos testes.
+
+### CI
+
+- Incluir workflow GitHub Actions (`ci.yml`) para executar lint (flake8) e testes (pytest) em cada PR.
+
+---
+
 ## [0.1.1] – 2025-07-10
 
 ### Refactor
