@@ -2,11 +2,14 @@
 import { useEffect, useState } from "react";
 import { getUsers, getCategories, getTransactions, User, Category, Transaction } from "../lib/api";
 
+import CategoryPieChart from "../components/CategoryPieChart";
+
+
 export default function Home() {
+  const [loading, setLoading]           = useState(true);
   const [users, setUsers]               = useState<User[]>([]);
   const [categories, setCategories]     = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading]           = useState(true);
   const [error, setError]               = useState<string | null>(null);
 
   useEffect(() => {
@@ -59,6 +62,14 @@ export default function Home() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-xl font-semibold mb-2">Despesas por Categoria</h2>
+        <CategoryPieChart
+          transactions = {transactions}
+          categories   = {categories}
+        />
       </section>
 
     </main>

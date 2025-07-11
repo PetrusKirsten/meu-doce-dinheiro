@@ -2,6 +2,10 @@
 
 // Puxa a URL base da API das variáveis de ambiente
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+if (!API_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL não está definida");
+}
+console.log("API_URL =", API_URL);
 
 // Define o shape dos dados (espelhando seus schemas Pydantic)
 export interface User {
