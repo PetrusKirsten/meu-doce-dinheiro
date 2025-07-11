@@ -50,3 +50,14 @@ class Transaction(TransactionBase):
     id : int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# -------------------------
+# Schemas para relatórios
+# -------------------------
+class MonthlyBalance(BaseModel):
+    month   : str    # ex. "2025-01"
+    balance : float
+
+    model_config = ConfigDict(from_attributes=True)
+

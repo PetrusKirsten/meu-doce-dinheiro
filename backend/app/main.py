@@ -1,9 +1,12 @@
 from . import db
 from . import models, crud, schemas
 
+from .schemas import MonthlyBalance
+
 from sqlalchemy.orm          import Session
 from fastapi                 import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI(title="Meu Doce Dinheiro API")
 
@@ -72,3 +75,14 @@ def read_transaction(tx_id: int, db: Session = Depends(get_db)):
     if not db_tx:
         raise HTTPException(404, detail="Transaction not found")
     return db_tx
+
+
+# ------ Relatórios ------
+
+@app.get(
+    "/reports/monthly-balance/{year}",
+    response_model=list[MonthlyBalance],
+    tags=["reports"]
+)
+def read_monthly_balance(year: int, db: Session = Depends(get_db)):
+    return crud.get_monthly_balance(db, year)

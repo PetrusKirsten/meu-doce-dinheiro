@@ -1,5 +1,6 @@
 from . import models, schemas
 
+from sqlalchemy     import func
 from sqlalchemy.orm import Session
 
 
@@ -19,6 +20,7 @@ def create_user(db: Session, user_in: schemas.UserCreate) -> models.User:
 
     return db_user
 
+
 # ------ Categorias ------
 
 def get_category(db: Session, category_id: int) -> models.Category | None:
@@ -34,6 +36,7 @@ def create_category(db: Session, cat_in: schemas.CategoryCreate) -> models.Categ
     db.refresh(db_cat)
 
     return db_cat
+
 
 # ------ Transações ------
 
@@ -66,3 +69,35 @@ def create_transaction(
 
 # (Opcional) funções de atualização e remoção seguem padrão similar:
 # def update_transaction(...), def delete_transaction(...)
+
+
+# ------ Relatórios ------
+
+def get_monthly_balance(db: Session, year: int) -> list[dict]:
+    """
+    Retorna lista de { month: 'YYYY-MM', balance: total_receitas - total_despesas } 
+    para cada mês do ano informado.
+    """
+    # Formata '2025-07-11' como '2025-07'
+    month_col = func.strftime("%Y-%m", models.Transaction.date)
+
+    # Soma receitas e despesas por mês
+    results = (
+        db.query(
+            month_col.label("month"),
+            (func.sum(
+                func.case(
+                    [
+                        (models.Transaction.amount >= 0, models.Transaction.amount),
+                        (models.Transaction.amount < 0, models.Transaction.amount)
+                    ]
+                )
+            )).label("balance")
+        )
+        .filter(func.strftime("%Y", models.Transaction.date) == str(year))
+        .group_by(month_col)
+        .order_by(month_col)
+        .all()
+    )
+    # results virá como lista de tuples; converte em list[dict]
+    return [ {"month": m, "balance": b} for m, b in results ]
