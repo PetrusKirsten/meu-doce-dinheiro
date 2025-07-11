@@ -1,6 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
-
 
 # -------------------------
 # Schemas para User
@@ -10,13 +9,13 @@ class UserBase(BaseModel):
     email : str
 
 class UserCreate(UserBase):
-    password : str  # se você tiver autenticação, ou remova este campo
+    password : str
 
 class User(UserBase):
     id : int
 
-    class Config:
-        rom_attributes = True
+    # substitui class Config
+    model_config = ConfigDict(from_attributes=True)
 
 
 # -------------------------
@@ -31,8 +30,7 @@ class CategoryCreate(CategoryBase):
 class Category(CategoryBase):
     id : int
 
-    class Config:
-        rom_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # -------------------------
@@ -51,5 +49,4 @@ class TransactionCreate(TransactionBase):
 class Transaction(TransactionBase):
     id : int
 
-    class Config:
-        rom_attributes = True
+    model_config = ConfigDict(from_attributes=True)

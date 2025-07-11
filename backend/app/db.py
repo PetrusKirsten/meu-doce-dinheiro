@@ -1,6 +1,5 @@
-import os
-from pathlib import Path
-from sqlalchemy import create_engine
+from pathlib        import Path
+from sqlalchemy     import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Pega a raiz do projeto (pastas acima de "app")
