@@ -10,25 +10,64 @@ export interface User {
   email : string;
 }
 
+// tipagem para Category
 export interface Category {
   id   : number;
   name : string;
 }
 
+// tipagem para Transaction
+export interface Transaction {
+  id           : number;
+  amount       : number;
+  date         : string;        // vem como ISO string
+  description? : string;
+  category_id  : number;
+  owner_id     : number;
+}
+
+// schema de criação, se você for usar POST depois
+export interface TransactionCreate {
+  amount       : number;
+  date         : string;
+  description? : string;
+  category_id  : number;
+  owner_id     : number;
+}
+
+
 // Função para listar usuários (GET /users/)
 export async function getUsers(): Promise<User[]> {
+  
   const res = await fetch(`${API_URL}/users/`);
+  
   if (!res.ok) {
     throw new Error(`Erro ao buscar usuários: ${res.status} ${res.statusText}`);
   }
+  
   return res.json();
 }
 
 // Função para listar categorias (GET /categories/)
 export async function getCategories(): Promise<Category[]> {
+  
   const res = await fetch(`${API_URL}/categories/`);
+  
   if (!res.ok) {
     throw new Error(`Erro ao buscar categorias: ${res.status} ${res.statusText}`);
   }
+  
+  return res.json();
+}
+
+// função para listar transações (GET /transactions/)
+export async function getTransactions(): Promise<Transaction[]> {
+  
+  const res = await fetch(`${API_URL}/transactions/`);
+  
+  if (!res.ok) {
+    throw new Error(`Erro ao buscar transações: ${res.status} ${res.statusText}`);
+  }
+  
   return res.json();
 }

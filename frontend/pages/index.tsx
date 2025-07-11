@@ -1,18 +1,20 @@
 // frontend/pages/index.tsx
 import { useEffect, useState } from "react";
-import { getUsers, getCategories, User, Category } from "../lib/api";
+import { getUsers, getCategories, getTransactions, User, Category, Transaction } from "../lib/api";
 
 export default function Home() {
-  const [users, setUsers]           = useState<User[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState<string | null>(null);
+  const [users, setUsers]               = useState<User[]>([]);
+  const [categories, setCategories]     = useState<Category[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading]           = useState(true);
+  const [error, setError]               = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([getUsers(), getCategories()])
-      .then(([u, c]) => {
+    Promise.all([getUsers(), getCategories(), getTransactions()])
+      .then(([u, c, txs]) => {
         setUsers(u);
         setCategories(c);
+        setTransactions(txs);
       })
       .catch(err => {
         console.error(err);
@@ -45,6 +47,20 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
+      <section>
+        <h2 className="text-xl font-semibold">Transações</h2>
+        <ul className="list-disc pl-6">
+          {transactions.map(tx => (
+            <li key={tx.id}>
+              {new Date(tx.date).toLocaleDateString()} – 
+              {tx.description ?? "(sem descrição)"}: 
+              R$ {tx.amount.toFixed(2)}
+            </li>
+          ))}
+        </ul>
+      </section>
+
     </main>
   );
 }
