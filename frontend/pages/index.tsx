@@ -16,6 +16,8 @@ import type {
   MonthlyBalance,
 } from "../lib/api";
 
+import UserForm            from "../components/UserForm";
+import CategoryForm        from "../components/CategoryForm";
 import TransactionForm     from "../components/TransactionForm";
 import CategoryPieChart    from "../components/CategoryPieChart";
 import MonthlyBalanceChart from "../components/MonthlyBalanceChart";
@@ -68,9 +70,36 @@ export default function Home() {
   // 3️⃣ Render
   return (
     <main className="p-4">
+      
       <h1 className="text-3xl font-bold mb-6">Meu Doce Dinheiro</h1>
 
-      {/* Formulário separado */}
+      {/* Formulário de Usuário */}
+      <UserForm />
+
+      {/* Lista de Usuários */}
+      <section className="mb-8">
+        <h2 className="text-2xl font-semibold mb-2">Usuários</h2>
+        <ul className="list-disc pl-6">
+          {users!.map(u => (
+            <li key={u.id}>{u.name} ({u.email})</li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Formulário de Categoria */}
+      <CategoryForm />
+
+      {/* Lista de Categorias */}
+      <section className="mb-8">
+        <h2 className="text-2xl font-semibold mb-2">Categorias</h2>
+        <ul className="list-disc pl-6">
+          {categories!.map(c => (
+            <li key={c.id}>{c.name}</li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Formulário de Transação */}
       <TransactionForm users={users!} categories={categories!} />
 
       {/* Lista de Transações */}
