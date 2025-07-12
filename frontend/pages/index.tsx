@@ -1,23 +1,32 @@
 // frontend/pages/index.tsx
 
-import { useQuery } from "@tanstack/react-query";
+import { 
+  useQuery,
+  useQueryClient,
+  useMutation,
+} from "@tanstack/react-query";
+
 import type {
   User,
   Category,
   Transaction,
   MonthlyBalance,
+  TransactionCreate,
 } from "../lib/api";
+
 import {
   getUsers,
   getCategories,
   getTransactions,
   getMonthlyBalance,
 } from "../lib/api";
-import CategoryPieChart from "../components/CategoryPieChart";
-import MonthlyBalanceChart from "../components/MonthlyBalanceChart";
+
+import CategoryPieChart     from "../components/CategoryPieChart";
+import MonthlyBalanceChart  from "../components/MonthlyBalanceChart";
+import TransactionForm      from "../components/TransactionForm";
 
 export default function Home() {
-  // agora usamos o objeto { queryKey, queryFn }
+  
   const {
     data: users,
     isLoading: uLoading,
@@ -63,6 +72,14 @@ export default function Home() {
   return (
     <main className="p-4">
       <h1 className="text-2xl font-bold mb-6">Meu Doce Dinheiro</h1>
+
+     {/* Formulário modularizado */}
+     <TransactionForm
+        users      = {users!}
+        categories = {categories!} 
+        onSubmit   = {function (data: TransactionCreate):
+          void {throw new Error("Function not implemented.");}}
+      />
 
       {/* Usuários */}
       <section className="mb-8">
