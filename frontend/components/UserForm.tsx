@@ -27,35 +27,55 @@ export default function UserForm() {
   return (
     <section className="mb-8">
       
-      <h2 className="text-xl font-semibold mb-2">Novo Usuário</h2>
+      <h2 className="text-xl font-semibold mb-2">
+        Novo Usuário
+      </h2>
       
-      <form onSubmit={handleSubmit} className="grid gap-2 max-w-md">
-        
-        <input name="name" placeholder="Nome" required className="border p-1" />
-        
-        <input name="email" type="email" placeholder="Email" required className="border p-1" />
+      <form 
+        onSubmit  = {handleSubmit}
+        className = "grid gap-2 max-w-md">
         
         <input
-          name="password"
-          type="password"
-          placeholder="Senha"
+            name        = "name"
+            placeholder = "Nome"
+            required 
+            className   = "border p-1"
+        />
+        
+        <input 
+            name        = "email"
+            type        = "email"
+            placeholder = "Email"
+            required 
+            className   = "border p-1"
+        />
+        
+        <input
+          name        = "password"
+          type        = "password"
+          placeholder = "Senha"
           required
-          className="border p-1"/>
+          className   = "border p-1"
+        />
         
         <button
-          type="submit"
-          disabled={mutation.status === "pending"}
-          className="bg-green-600 text-white p-2 rounded disabled:opacity-50">
+          type      = "submit"
+          disabled  = {mutation.status === "pending"}
+          className = "bg-green-600 text-white p-2 rounded disabled:opacity-50">
 
           {mutation.status === "pending" ? "Enviando…" : "Criar Usuário"}
 
         </button>
         
         {mutation.status === "error" && (
-          <p className="text-red-600">Erro ao criar usuário.</p>
+          <p className="text-red-600">
+            Erro ao criar usuário.
+          </p>
         )}
       
       </form>
+
     </section>
+
   );
 }

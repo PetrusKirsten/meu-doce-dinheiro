@@ -37,28 +37,51 @@ export default function TransactionForm({ users, categories }: Props) {
   return (
     <section className="mb-8">
 
-      <h2 className="text-xl font-semibold mb-2">Nova Transação</h2>
+      <h2 className="text-xl font-semibold mb-2">
+        Nova Transação
+      </h2>
 
-      <form onSubmit={handleSubmit} className="grid gap-2 max-w-md">
+      <form 
+        onSubmit  = {handleSubmit}
+        className = "grid gap-2 max-w-md">
 
-        <input name="amount" type="number" step="0.01" placeholder="Valor" required className="border p-1" />
+        <input 
+            name        = "amount"
+            type        = "number" 
+            step        = "0.01"
+            placeholder = "Valor" 
+            required
+            className   = "border p-1"
+        />
         
-        <input name="date" type="date" required className="border p-1" />
+        <input 
+            name      = "date"
+            type      = "date"
+            required  
+            className = "border p-1"
+        />
         
-        <input name="description" placeholder="Descrição" className="border p-1" />
+        <input 
+            name        = "description" 
+            placeholder = "Descrição" 
+            className   = "border p-1"
+        />
         
-        <select name="category_id" required className="border p-1">
-          <option value="">Categoria</option>
-          {categories.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
-          ))}
+        <select 
+            name      = "category_id" 
+            required 
+            className = "border p-1">
+          <option value="">
+            Categoria
+          </option>
+          {categories.map(c => (<option key={c.id} value={c.id}>{c.name}</option>))}
         </select>
 
         <select name="owner_id" required className="border p-1">
-          <option value="">Usuário</option>
-          {users.map(u => (
-            <option key={u.id} value={u.id}>{u.name}</option>
-          ))}
+          <option value="">
+            Usuário
+          </option>
+          {users.map(u => (<option key={u.id} value={u.id}>{u.name}</option>))}
         </select>
         
         <button disabled={mutation.status === "pending"}>
