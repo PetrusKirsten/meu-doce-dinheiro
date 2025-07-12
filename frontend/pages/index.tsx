@@ -1,18 +1,6 @@
 // frontend/pages/index.tsx
-
-import { 
-  useQuery,
-  useQueryClient,
-  useMutation,
-} from "@tanstack/react-query";
-
-import type {
-  User,
-  Category,
-  Transaction,
-  MonthlyBalance,
-  TransactionCreate,
-} from "../lib/api";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   getUsers,
@@ -21,12 +9,19 @@ import {
   getMonthlyBalance,
 } from "../lib/api";
 
-import CategoryPieChart     from "../components/CategoryPieChart";
-import MonthlyBalanceChart  from "../components/MonthlyBalanceChart";
-import TransactionForm      from "../components/TransactionForm";
+import type {
+  User,
+  Category,
+  Transaction,
+  MonthlyBalance,
+} from "../lib/api";
+
+import TransactionForm     from "../components/TransactionForm";
+import CategoryPieChart    from "../components/CategoryPieChart";
+import MonthlyBalanceChart from "../components/MonthlyBalanceChart";
 
 export default function Home() {
-  
+  // 1️⃣ Queries
   const {
     data: users,
     isLoading: uLoading,
@@ -59,55 +54,30 @@ export default function Home() {
     isLoading: bLoading,
     isError: bError,
   } = useQuery<MonthlyBalance[], Error>({
-    queryKey: ["monthly-balance", 2025],
-    queryFn: () => getMonthlyBalance(2025),
+    queryKey: ["monthly-balance", new Date().getFullYear()],
+    queryFn: () => getMonthlyBalance(new Date().getFullYear()),
   });
 
   const isLoading = uLoading || cLoading || tLoading || bLoading;
   const isError = uError || cError || tError || bError;
 
+  // 2️⃣ Estados de loading / erro
   if (isLoading) return <p>Carregando dados...</p>;
-  if (isError)   return <p>Erro ao carregar dados.</p>;
+  if (isError) return <p>Ocorreu um erro ao buscar os dados.</p>;
 
+  // 3️⃣ Render
   return (
     <main className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Meu Doce Dinheiro</h1>
+      <h1 className="text-3xl font-bold mb-6">Meu Doce Dinheiro</h1>
 
-     {/* Formulário modularizado */}
-     <TransactionForm
-        users      = {users!}
-        categories = {categories!} 
-        onSubmit   = {function (data: TransactionCreate):
-          void {throw new Error("Function not implemented.");}}
-      />
+      {/* Formulário separado */}
+      <TransactionForm users={users!} categories={categories!} />
 
-      {/* Usuários */}
+      {/* Lista de Transações */}
       <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Usuários</h2>
+        <h2 className="text-2xl font-semibold mb-2">Transações</h2>
         <ul className="list-disc pl-6">
-          {users!.map(u => (
-            <li key={u.id}>
-              {u.name} ({u.email})
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Categorias */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Categorias</h2>
-        <ul className="list-disc pl-6">
-          {categories!.map(c => (
-            <li key={c.id}>{c.name}</li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Transações */}
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Transações</h2>
-        <ul className="list-disc pl-6">
-          {transactions!.map(tx => (
+          {transactions!.map((tx) => (
             <li key={tx.id}>
               {new Date(tx.date).toLocaleDateString()} –{" "}
               {tx.description ?? "(sem descrição)"}: R${" "}
@@ -119,7 +89,7 @@ export default function Home() {
 
       {/* Gráfico de Pizza */}
       <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">
+        <h2 className="text-2xl font-semibold mb-4">
           Despesas por Categoria
         </h2>
         <CategoryPieChart
@@ -130,10 +100,10 @@ export default function Home() {
 
       {/* Gráfico de Linha */}
       <section>
-        <h2 className="text-xl font-semibold mb-4">
-          Saldo Mensal (2025)
+        <h2 className="text-2xl font-semibold mb-4">
+          Saldo Mensal ({new Date().getFullYear()})
         </h2>
-        <MonthlyBalanceChart year={2025} />
+        <MonthlyBalanceChart year={new Date().getFullYear()} />
       </section>
     </main>
   );
