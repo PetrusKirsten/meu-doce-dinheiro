@@ -23,47 +23,47 @@ import MonthlyBalanceChart from "../components/MonthlyBalanceChart";
 export default function Home() {
   // 1️⃣ Queries
   const {
-    data: users,
-    isLoading: uLoading,
-    isError: uError,
+    data      : users,
+    isLoading : uLoading,
+    isError   : uError,
   } = useQuery<User[], Error>({
-    queryKey: ["users"],
-    queryFn: getUsers,
+    queryKey : ["users"],
+    queryFn  : getUsers,
   });
 
   const {
-    data: categories,
-    isLoading: cLoading,
-    isError: cError,
+    data      : categories,
+    isLoading : cLoading,
+    isError   : cError,
   } = useQuery<Category[], Error>({
-    queryKey: ["categories"],
-    queryFn: getCategories,
+    queryKey : ["categories"],
+    queryFn  : getCategories,
   });
 
   const {
-    data: transactions,
-    isLoading: tLoading,
-    isError: tError,
+    data      : transactions,
+    isLoading : tLoading,
+    isError   : tError,
   } = useQuery<Transaction[], Error>({
-    queryKey: ["transactions"],
-    queryFn: getTransactions,
+    queryKey : ["transactions"],
+    queryFn  : getTransactions,
   });
 
   const {
-    data: balance,
-    isLoading: bLoading,
-    isError: bError,
+    data      : balance,
+    isLoading : bLoading,
+    isError   : bError,
   } = useQuery<MonthlyBalance[], Error>({
-    queryKey: ["monthly-balance", new Date().getFullYear()],
-    queryFn: () => getMonthlyBalance(new Date().getFullYear()),
+    queryKey : ["monthly-balance", new Date().getFullYear()],
+    queryFn  : () => getMonthlyBalance(new Date().getFullYear()),
   });
 
   const isLoading = uLoading || cLoading || tLoading || bLoading;
-  const isError = uError || cError || tError || bError;
+  const isError   = uError   || cError   || tError   || bError;
 
   // 2️⃣ Estados de loading / erro
   if (isLoading) return <p>Carregando dados...</p>;
-  if (isError) return <p>Ocorreu um erro ao buscar os dados.</p>;
+  if (isError)   return <p>Ocorreu um erro ao buscar os dados.</p>;
 
   // 3️⃣ Render
   return (
