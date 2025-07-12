@@ -70,20 +70,25 @@ export default function Home() {
   // 3️⃣ Render
   return (
     <main className="p-4">
-      
-      <h1 className="text-3xl font-bold mb-6">Meu Doce Dinheiro</h1>
+
+      <h1 className="text-3xl font-bold mb-6">
+        Meu Doce Dinheiro
+      </h1>
 
       {/* Formulário de Usuário */}
       <UserForm />
 
       {/* Lista de Usuários */}
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Usuários</h2>
+
+        <h2 className="text-2xl font-semibold mb-2">
+          Usuários
+        </h2>
+
         <ul className="list-disc pl-6">
-          {users!.map(u => (
-            <li key={u.id}>{u.name} ({u.email})</li>
-          ))}
+          {users!.map(u => (<li key={u.id}>{u.name} ({u.email})</li>))}
         </ul>
+
       </section>
 
       {/* Formulário de Categoria */}
@@ -91,20 +96,30 @@ export default function Home() {
 
       {/* Lista de Categorias */}
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Categorias</h2>
+
+        <h2 className="text-2xl font-semibold mb-2">
+          Categorias
+        </h2>
+
         <ul className="list-disc pl-6">
-          {categories!.map(c => (
-            <li key={c.id}>{c.name}</li>
-          ))}
+          {categories!.map(c => (<li key={c.id}>{c.name}</li>))}
         </ul>
+
       </section>
 
       {/* Formulário de Transação */}
-      <TransactionForm users={users!} categories={categories!} />
+      <TransactionForm 
+        users      = {users!}
+        categories = {categories!} 
+      />
 
       {/* Lista de Transações */}
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Transações</h2>
+
+        <h2 className="text-2xl font-semibold mb-2">
+          Transações
+        </h2>
+
         <ul className="list-disc pl-6">
           {transactions!.map((tx) => (
             <li key={tx.id}>
@@ -114,17 +129,21 @@ export default function Home() {
             </li>
           ))}
         </ul>
+        
       </section>
 
       {/* Gráfico de Pizza */}
       <section className="mb-8">
+
         <h2 className="text-2xl font-semibold mb-4">
           Despesas por Categoria
         </h2>
+
         <CategoryPieChart
-          transactions={transactions!}
-          categories={categories!}
+          transactions = {transactions!}
+          categories   = {categories!}
         />
+
       </section>
 
       {/* Gráfico de Linha */}
@@ -132,7 +151,11 @@ export default function Home() {
         <h2 className="text-2xl font-semibold mb-4">
           Saldo Mensal ({new Date().getFullYear()})
         </h2>
-        <MonthlyBalanceChart year={new Date().getFullYear()} />
+        
+        <MonthlyBalanceChart 
+          year = {new Date().getFullYear()}
+        />
+
       </section>
     </main>
   );
