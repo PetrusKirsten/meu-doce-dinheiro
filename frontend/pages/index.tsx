@@ -1,12 +1,16 @@
 // frontend/pages/index.tsx
 
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { 
+  useQuery,
+  useMutation,
+  useQueryClient 
+} from "@tanstack/react-query";
 
 import {
-  getUsers,
-  getCategories,
-  getTransactions,
+  getUsers,        deleteUser,
+  getCategories,   deleteCategory,
+  getTransactions, deleteTransaction,
   getMonthlyBalance,
 } from "../lib/api";
 
@@ -22,6 +26,7 @@ import CategoryForm        from "../components/CategoryForm";
 import TransactionForm     from "../components/TransactionForm";
 import CategoryPieChart    from "../components/CategoryPieChart";
 import MonthlyBalanceChart from "../components/MonthlyBalanceChart";
+
 
 export default function Home() {
   // 1️⃣ Queries
@@ -60,6 +65,24 @@ export default function Home() {
     queryKey : ["monthly-balance", new Date().getFullYear()],
     queryFn  : () => getMonthlyBalance(new Date().getFullYear()),
   });
+
+  const qc = useQueryClient();
+
+  const delUser = useMutation<void, Error, number>({
+    mutationFn : deleteUser,
+    onSuccess  : () => qc.invalidateQueries({ queryKey: ["users"] }),
+  });
+
+  const delCat = useMutation<void, Error, number>({
+    mutationFn : deleteCategory,
+    onSuccess  : () => qc.invalidateQueries({ queryKey: ["categories"] }),
+  });
+
+  const delTx = useMutation<void, Error, number>({
+    mutationFn : deleteTransaction,
+    onSuccess  : () => qc.invalidateQueries({ queryKey: ["transactions"] }),
+  });
+
 
   const isLoading = uLoading || cLoading || tLoading || bLoading;
   const isError   = uError   || cError   || tError   || bError;
