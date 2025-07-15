@@ -1,5 +1,5 @@
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from pydantic import BaseModel, ConfigDict
 
 # -------------------------
 # Schemas para User
@@ -17,6 +17,12 @@ class User(UserBase):
     # substitui class Config
     model_config = ConfigDict(from_attributes=True)
 
+class UserUpdate(BaseModel):
+    name  : str | None = None
+    email : str | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
 
 # -------------------------
 # Schemas para Category
@@ -29,6 +35,11 @@ class CategoryCreate(CategoryBase):
 
 class Category(CategoryBase):
     id : int
+
+    model_config = ConfigDict(from_attributes=True)
+
+class CategoryUpdate(BaseModel):
+    name: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -48,6 +59,15 @@ class TransactionCreate(TransactionBase):
 
 class Transaction(TransactionBase):
     id : int
+
+    model_config = ConfigDict(from_attributes=True)
+
+class TransactionUpdate(BaseModel):
+    amount      : float | None = None
+    date        : str   | None = None
+    description : str   | None = None
+    category_id : int   | None = None
+    owner_id    : int   | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

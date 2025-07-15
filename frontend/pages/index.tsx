@@ -35,7 +35,7 @@ export default function Home() {
   });
 
   const {
-    data      : categories,
+    data      : categories = [],
     isLoading : cLoading,
     isError   : cError,
   } = useQuery<Category[], Error>({
