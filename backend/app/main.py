@@ -36,16 +36,19 @@ def get_db():
 
 # Create a new user
 @app.post("/users/", response_model=schemas.User)
+
 def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db, user_in)
 
 # Get all users
 @app.get("/users/", response_model=list[schemas.User])
+
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_users(db, skip, limit)
 
 # Get user by ID
 @app.get("/users/{user_id}", response_model=schemas.User)
+
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id)
     if not db_user:
@@ -82,11 +85,13 @@ def api_delete_user(
 
 # Get category by ID
 @app.post("/categories/", response_model=schemas.Category)
+
 def create_category(cat_in: schemas.CategoryCreate, db: Session = Depends(get_db)):
     return crud.create_category(db, cat_in)
 
 # Get all categories
 @app.get("/categories/", response_model=list[schemas.Category])
+
 def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_categories(db, skip, limit)
 
@@ -119,16 +124,19 @@ def api_delete_category(
 
 # Create a new transaction
 @app.post("/transactions/", response_model=schemas.Transaction)
+
 def create_transaction(tx_in: schemas.TransactionCreate, db: Session = Depends(get_db)):
     return crud.create_transaction(db, tx_in)
 
 # Get all transactions
 @app.get("/transactions/", response_model=list[schemas.Transaction])
+
 def read_transactions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_transactions(db)
 
 # Get transaction by ID
 @app.get("/transactions/{tx_id}", response_model=schemas.Transaction)
+
 def read_transaction(tx_id: int, db: Session = Depends(get_db)):
     db_tx = crud.get_transaction(db, tx_id)
     if not db_tx:

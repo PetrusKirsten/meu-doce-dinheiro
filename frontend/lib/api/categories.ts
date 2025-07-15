@@ -3,15 +3,41 @@ import { fetcher } from "./client";
 import type { Category } from "./types";
 
 /** GET /categories/ */
-export function getCategories(): Promise<Category[]> {
+export function getCategories(): 
+
+Promise<Category[]> {
   return fetcher("/categories/");
 }
 
 /** POST /categories/ */
-export function createCategory(payload: { name: string }): Promise<Category> {
+export function createCategory(payload: { name: string }): 
+
+Promise<Category> {
   return fetcher("/categories/", {
     method  : "POST",
     headers : { "Content-Type": "application/json" },
     body    : JSON.stringify(payload),
   });
 }
+
+/** PUT /categories/:id */
+export function updateCategory(
+  id: number,
+  payload: Partial<Pick<Category, "name">>):
+  
+  Promise<Category> {
+  return fetcher(`/categories/${id}`, {
+    method  : "PUT",
+    headers : { "Content-Type": "application/json" },
+    body    : JSON.stringify(payload),
+  });
+}
+
+/** DELETE /categories/:id */
+export function deleteCategory(id: number):
+
+Promise<void> {
+  return fetcher(`/categories/${id}`, { method: "DELETE" });
+}
+
+
