@@ -1,4 +1,5 @@
 // frontend/components/CategoryForm.tsx
+
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCategory } from "../lib/api";

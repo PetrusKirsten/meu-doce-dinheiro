@@ -1,4 +1,5 @@
 // frontend/pages/index.tsx
+
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 
