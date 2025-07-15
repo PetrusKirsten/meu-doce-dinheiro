@@ -7,6 +7,39 @@ e usa [SemVer](https://semver.org/lang/pt-BR/) para versionamento.
 
 ---
 
+## [0.2.2] – 2025-07-15
+
+### Added
+
+- **Backend**  
+  - Novos schemas de update (UserUpdate, CategoryUpdate, TransactionUpdate) em `schemas.py`.  
+  - Endpoints **PUT** e **DELETE** para users, categories e transactions em `main.py`.  
+  - Funções `update_*` e `delete_*` em `crud.py`, com checagem de integridade (não permite apagar categoria em uso).  
+  - Filtro em `get_transactions` para descartar transações órfãs, evitando `ResponseValidationError`.
+
+- **API Client** (`frontend/lib/api`)
+  - Novas funções REST:  
+    - `updateUser`, `deleteUser`  
+    - `updateCategory`, `deleteCategory`  
+    - `updateTransaction`, `deleteTransaction`
+
+- **Frontend UI** (Next.js + React Query)  
+  - Botões de “🗑️” para excluir users, categories e transactions diretamente nas listas.  
+  - Mutations de delete com React Query, incluindo _optimistic updates_ (uso de `onMutate`, `onError`, `onSettled`) para remoção instantânea do cache.  
+  - Tratamento de loading e rollback automático em caso de erro.
+
+### Changed
+
+- Ajuste no hook de listagem de `categories` para evitar estado `undefined` (`data = []` por default).  
+- Atualização dos componentes de listagem (`index.tsx`) para suportar `invalidateQueries` e remapear arrays sem causar erro de `.map` em `undefined`.
+
+### Fixed
+
+- ResponseValidationError ao listar transações com `category_id = None`.  
+- Erro de “Cannot read properties of undefined” em `categories.map` após delete.
+
+---
+
 ## [0.2.1]
 
 ### Test

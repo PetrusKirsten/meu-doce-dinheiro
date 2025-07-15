@@ -104,15 +104,21 @@ export default function Home() {
 
       {/* Lista de Usuários */}
       <section className="mb-8">
-
-        <h2 className="text-2xl font-semibold mb-2">
-          Usuários
-        </h2>
-
+        <h2 className="text-2xl font-semibold mb-2">Usuários</h2>
         <ul className="list-disc pl-6">
-          {users!.map(u => (<li key={u.id}>{u.name} ({u.email})</li>))}
+          {users.map(u => (
+            <li key={u.id} className="flex items-center justify-between">
+              <span>{u.name} ({u.email})</span>
+              <button
+                onClick   = {() => delUser.mutate(u.id)}
+                disabled  = {delUser.status === "pending"}
+                className = "text-red-600 hover:opacity-75"
+                title     = "Excluir usuário">
+                🗑️
+              </button>
+            </li>
+          ))}
         </ul>
-
       </section>
 
       {/* Formulário de Categoria */}
@@ -120,15 +126,21 @@ export default function Home() {
 
       {/* Lista de Categorias */}
       <section className="mb-8">
-
-        <h2 className="text-2xl font-semibold mb-2">
-          Categorias
-        </h2>
-
+        <h2 className="text-2xl font-semibold mb-2">Categorias</h2>
         <ul className="list-disc pl-6">
-          {categories!.map(c => (<li key={c.id}>{c.name}</li>))}
+          {categories.map(c => (
+            <li key={c.id} className="flex items-center justify-between">
+              <span>{c.name}</span>
+              <button
+                onClick   = {() => delCat.mutate(c.id)}
+                disabled  = {delCat.status === "pending"}
+                className = "text-red-600 hover:opacity-75"
+                title     = "Excluir categoria">
+                🗑️
+              </button>
+            </li>
+          ))}
         </ul>
-
       </section>
 
       {/* Formulário de Transação */}
@@ -139,21 +151,25 @@ export default function Home() {
 
       {/* Lista de Transações */}
       <section className="mb-8">
-
-        <h2 className="text-2xl font-semibold mb-2">
-          Transações
-        </h2>
-
+        <h2 className="text-2xl font-semibold mb-2">Transações</h2>
         <ul className="list-disc pl-6">
-          {transactions!.map((tx) => (
-            <li key={tx.id}>
-              {new Date(tx.date).toLocaleDateString()} –{" "}
-              {tx.description ?? "(sem descrição)"}: R${" "}
-              {tx.amount.toFixed(2)}
+          {transactions.map(tx => (
+            <li key={tx.id} className="flex items-center justify-between">
+              <span>
+                {new Date(tx.date).toLocaleDateString()} –{" "}
+                {tx.description ?? "(sem descrição)"}: R${" "}
+                {tx.amount.toFixed(2)}
+              </span>
+              <button
+                onClick   = {() => delTx.mutate(tx.id)}
+                disabled  = {delTx.status === "pending"}
+                className = "text-red-600 hover:opacity-75"
+                title     = "Excluir transação">
+                🗑️
+              </button>
             </li>
           ))}
         </ul>
-        
       </section>
 
       {/* Gráfico de Pizza */}
