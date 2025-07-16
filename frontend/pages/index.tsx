@@ -99,9 +99,6 @@ export default function Home() {
         Meu Doce Dinheiro
       </h1>
 
-      {/* Formulário de Usuário */}
-      <UserForm />
-
       {/* Lista de Usuários */}
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-2">Usuários</h2>
@@ -121,8 +118,8 @@ export default function Home() {
         </ul>
       </section>
 
-      {/* Formulário de Categoria */}
-      <CategoryForm />
+      {/* Formulário de Usuário */}
+      <UserForm />
 
       {/* Lista de Categorias */}
       <section className="mb-8">
@@ -143,11 +140,8 @@ export default function Home() {
         </ul>
       </section>
 
-      {/* Formulário de Transação */}
-      <TransactionForm 
-        users      = {users!}
-        categories = {categories!} 
-      />
+      {/* Formulário de Categoria */}
+      <CategoryForm />
 
       {/* Lista de Transações */}
       <section className="mb-8">
@@ -171,6 +165,12 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
+      {/* Formulário de Transação */}
+      <TransactionForm 
+        users      = {users!}
+        categories = {categories!} 
+      />
 
       {/* Gráfico de Pizza */}
       <section className="mb-8">
