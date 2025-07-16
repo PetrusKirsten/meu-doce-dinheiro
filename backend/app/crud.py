@@ -10,15 +10,18 @@ from sqlalchemy.orm import Session
 
 def get_user(db      : Session, 
              user_id : int) -> models.User | None:
+    
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 def get_users(db    : Session,
               skip  : int = 0, 
               limit : int = 100) -> list[models.User]:
+    
     return db.query(models.User).offset(skip).limit(limit).all()
 
 def create_user(db      : Session,
                 user_in : schemas.UserCreate) -> models.User:
+    
     db_user = models.User(name=user_in.name, email=user_in.email)
     db.add(db_user)
     db.commit()
@@ -60,15 +63,18 @@ def delete_user(db      : Session,
 
 def get_category(db          : Session, 
                  category_id : int) -> models.Category | None:
+    
     return db.query(models.Category).filter(models.Category.id == category_id).first()
 
 def get_categories(db    : Session, 
                    skip  : int = 0, 
                    limit : int = 100) -> list[models.Category]:
+    
     return db.query(models.Category).offset(skip).limit(limit).all()
 
 def create_category(db     : Session, 
                     cat_in : schemas.CategoryCreate) -> models.Category:
+    
     db_cat = models.Category(name=cat_in.name)
     db.add(db_cat)
     db.commit()
@@ -118,12 +124,14 @@ def delete_category(db     : Session,
 
 def get_transaction(db    : Session, 
                     tx_id : int) -> models.Transaction | None:
+    
     return db.query(models.Transaction).filter(models.Transaction.id == tx_id).first()
 
 def get_transactions(db: Session) -> list[models.Transaction]:
     """
     Retorna apenas transações que ainda têm categoria e usuário válidos.
     """
+    
     return (
         db.query(models.Transaction)
           .filter(models.Transaction.category_id != None)   # exclui None
