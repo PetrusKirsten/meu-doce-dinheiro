@@ -12,7 +12,8 @@ class UserCreate(UserBase):
     password : str
 
 class User(UserBase):
-    id : int
+    id        : int
+    onboarded : bool
 
     # substitui class Config
     model_config = ConfigDict(from_attributes=True)

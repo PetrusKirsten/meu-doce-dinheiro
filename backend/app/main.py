@@ -125,8 +125,21 @@ def api_delete_category(
 # Create a new transaction
 @app.post("/transactions/", response_model=schemas.Transaction)
 
-def create_transaction(tx_in: schemas.TransactionCreate, db: Session = Depends(get_db)):
-    return crud.create_transaction(db, tx_in)
+def create_transaction(
+    tx_in : schemas.TransactionCreate,
+    db    : Session = Depends(get_db),
+    current_user    = Depends(read_user),
+):
+    # 1) Cria a transação
+    txn = crud.create_transaction(db, tx_in, current_user.id)
+
+    # 2) Se for a primeira vez, marca onboarded = True
+    if not current_user.onboarded:
+        current_user.onboarded = True
+        db.commit()
+        db.refresh(current_user)
+
+    return txn
 
 # Get all transactions
 @app.get("/transactions/", response_model=list[schemas.Transaction])

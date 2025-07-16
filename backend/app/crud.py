@@ -1,6 +1,6 @@
 from . import models, schemas
 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from sqlalchemy     import func
 from sqlalchemy.orm import Session
@@ -58,6 +58,23 @@ def delete_user(db      : Session,
     db.delete(user)
     db.commit()
 
+
+def mark_user_onboarded(db      : Session, 
+                        user_id : int) -> models.User:
+    
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuário não encontrado")
+    
+    user.onboarded = True
+    
+    db.commit()
+    db.refresh(user)
+
+    return user
 
 # ------ Categorias ------
 
@@ -139,14 +156,15 @@ def get_transactions(db: Session) -> list[models.Transaction]:
           .all()
     )
 
-def create_transaction(db    : Session,
-                       tx_in : schemas.TransactionCreate) -> models.Transaction:
+def create_transaction(db      : Session,
+                       tx_in   : schemas.TransactionCreate,
+                       user_id : int,) -> models.Transaction:
     
     db_tx = models.Transaction(
         amount      = tx_in.amount,
         date        = tx_in.date,
         description = tx_in.description,
-        owner_id    = tx_in.owner_id,
+        owner_id    = user_id,
         category_id = tx_in.category_id)
     
     db.add(db_tx)
