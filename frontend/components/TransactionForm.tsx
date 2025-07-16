@@ -1,101 +1,102 @@
 // frontend/components/TransactionForm.tsx
 
-import React from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createTransaction } from "../lib/api";
-import type { Transaction, TransactionCreate, Category, User } from "../lib/api";
+import React, { useState, useEffect } from 'react';
+import { fetchCategories, Category } from '../lib/api';
 
 interface Props {
-  users: User[];
-  categories: Category[];
+  onSubmit: (values: {
+    amount: number;
+    categoryId: string;
+    date: string;
+    description?: string;
+  }) => void;
 }
 
-export default function TransactionForm({ users, categories }: Props) {
-  const queryClient = useQueryClient();
+const TransactionForm: React.FC<Props> = ({ onSubmit }) => {
+  const [cats, setCats]       = useState<Category[]>([]);
+  const [error, setError]     = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    const mutation = useMutation<Transaction, Error, TransactionCreate>({
-    mutationFn: (tx) => createTransaction(tx),
-    onSuccess : ()   => {
-        queryClient.invalidateQueries({ queryKey: ["transactions"] });
-        queryClient.invalidateQueries({ queryKey: ["monthly-balance", new Date().getFullYear()] });
-        },}
-    );
+  const [date, setDate]               = useState(new Date().toISOString().slice(0, 10));
+  const [amount, setAmount]           = useState('');
+  const [categoryId, setCategoryId]   = useState('');
+  const [description, setDescription] = useState('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    fetchCategories()
+      .then(setCats)
+      .catch(() => setError('Falha ao carregar categorias'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handle = (e: React.FormEvent) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const data: TransactionCreate = {
-      amount      : Number((form.amount as HTMLInputElement).value),
-      date        : (form.date as HTMLInputElement).value,
-      description : (form.description as HTMLInputElement).value || undefined,
-      category_id : Number((form.category_id as HTMLSelectElement).value),
-      owner_id    : Number((form.owner_id as HTMLSelectElement).value),
-    };
-    mutation.mutate(data);
-    form.reset();
+    if (!amount || !categoryId) return;
+    onSubmit({
+      amount: Number(amount),
+      categoryId,
+      date,
+      description: description.trim() || undefined,
+    });
   };
 
+  if (loading) return <p>Carregando categorias...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
-    <section className="mb-8">
-
-      <h2 className="text-xl font-semibold mb-2">
-        Nova Transação
-      </h2>
-
-      <form 
-        onSubmit  = {handleSubmit}
-        className = "grid gap-2 max-w-md">
-
-        <input 
-            name        = "amount"
-            type        = "number" 
-            step        = "0.01"
-            placeholder = "Valor" 
-            required
-            className   = "border p-1"
+    <form onSubmit={handle} className="w-full max-w-md space-y-4">
+      <div>
+        <label className="block mb-1">Valor</label>
+        <input
+          type="number"
+          value={amount}
+          onChange={e => setAmount(e.target.value)}
+          className="w-full border px-3 py-2 rounded"
+          placeholder="123.45"
         />
-        
-        <input 
-            name      = "date"
-            type      = "date"
-            required  
-            className = "border p-1"
-        />
-        
-        <input 
-            name        = "description" 
-            placeholder = "Descrição" 
-            className   = "border p-1"
-        />
-        
-        <select 
-            name      = "category_id" 
-            required 
-            className = "border p-1">
-          <option value="">
-            Categoria
-          </option>
-          {categories.map(c => (<option key={c.id} value={c.id}>{c.name}</option>))}
+      </div>
+      <div>
+        <label className="block mb-1">Categoria</label>
+        <select
+          value={categoryId}
+          onChange={e => setCategoryId(e.target.value)}
+          className="w-full border px-3 py-2 rounded"
+        >
+          <option value="">Selecione...</option>
+          {cats.map(c => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
         </select>
-
-        <select name="owner_id" required className="border p-1">
-          <option value="">
-            Usuário
-          </option>
-          {users.map(u => (<option key={u.id} value={u.id}>{u.name}</option>))}
-        </select>
-        
-        <button disabled={mutation.status === "pending"}>
-            {mutation.status === "pending" ? "Enviando…" : "Adicionar"}
-        </button>
-        
-        {mutation.status === "error" && (
-            <p className="text-red-600">Erro ao criar transação.</p>
-        )}
-        
-        {mutation.isError && <p className="text-red-600">Erro ao criar transação.</p>}
-
-      </form>
-    </section>
+      </div>
+      <div>
+        <label className="block mb-1">Data</label>
+        <input
+          type="date"
+          value={date}
+          onChange={e => setDate(e.target.value)}
+          className="w-full border px-3 py-2 rounded"
+        />
+      </div>
+      <div>
+        <label className="block mb-1">Descrição</label>
+        <input
+          type="text"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          className="w-full border px-3 py-2 rounded"
+          placeholder="Opcional"
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded"
+      >
+        Criar transação
+      </button>
+    </form>
   );
-}
+};
+
+export default TransactionForm;

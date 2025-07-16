@@ -40,4 +40,10 @@ Promise<void> {
   return fetcher(`/categories/${id}`, { method: "DELETE" });
 }
 
+/** Fetch categories from the API */
+export async function fetchCategories(): Promise<Category[]> {
+  const res = await fetch('/api/categories');
+  if (!res.ok) throw new Error('Erro ao buscar categorias');
+  return res.json();
+}
 

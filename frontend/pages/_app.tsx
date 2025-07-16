@@ -1,14 +1,14 @@
-// frontend/pages/_app.tsx
-import type { AppProps } from "next/app";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from '../contexts/AuthContext'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-// 1 único client para toda a aplicação
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
-    </QueryClientProvider>
-  );
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+      </QueryClientProvider>
+    </AuthProvider>
+  )
 }
