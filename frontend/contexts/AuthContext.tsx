@@ -1,41 +1,56 @@
+// frontend/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
 
 const jwtDecode = require('jwt-decode') as (token: string) => any;
-
-interface User {
-  id    : number
-  email : string
+export interface User {
+  id: number
+  name: string
+  email: string
+  onboarded: boolean
 }
 
 interface AuthContextType {
-  user   :  User | null
-  token  : string | null
-  login  : (token: string) => void
-  logout : () => void
+  user: User | null
+  token: string | null
+  login: (token: string) => Promise<void>
+  logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({
-  user   : null,
-  token  : null,
-  login  : () => {},
-  logout : () => {},
+  user: null,
+  token: null,
+  login: async () => {},
+  logout: () => {},
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser]   = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
-  // tenta recuperar do localStorage quando a app sobe
+  // ao montar, tenta recuperar o token
   useEffect(() => {
     const stored = localStorage.getItem('token')
-    if (stored) login(stored)
+    if (stored) {
+      login(stored)
+    }
   }, [])
 
-  function login(newToken: string) {
+  // login agora busca o perfil completo
+  async function login(newToken: string) {
     localStorage.setItem('token', newToken)
     setToken(newToken)
-    const decoded = jwtDecode(newToken) as { sub: number; email: string }
-    setUser({ id: decoded.sub, email: decoded.email })
+
+    // opcional: decodifica só pra ter id/email rápido
+    const { sub: id } = jwtDecode(newToken) as { sub: number }
+    // const { sub: id } = jwtDecode(newToken) as { sub: number; email: string }
+        
+    // busca o usuário inteiro (incluindo onboarded)
+    const res = await fetch('/api/users/me', {
+      headers: { Authorization: `Bearer ${newToken}` },
+    })
+    if (!res.ok) throw new Error('Falha ao buscar perfil')
+    const fullUser = (await res.json()) as User
+    setUser(fullUser)
   }
 
   function logout() {
@@ -51,5 +66,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 }
 
-// hook pra usar no resto da app
 export const useAuth = () => useContext(AuthContext)
