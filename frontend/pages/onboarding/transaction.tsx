@@ -1,19 +1,13 @@
 // frontend/pages/onboarding/transaction.tsx
 
-// 1) Built-in / React
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-// 2) Terceiros
 import { useRouter } from 'next/router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-// 3) Contextos / Hooks da app
 import { useAuth } from '../../contexts/AuthContext'
 
-// 4) Componentes
 import TransactionForm from '../../components/TransactionForm'
-
-// 5) Serviços / Tipos
 import {
   createTransaction,
   Transaction,
@@ -29,22 +23,32 @@ type TransactionInput = {
 };
 
 export default function FirstTransactionSetup() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const [error, setError] = useState<string | null>(null);
+  const router   = useRouter()
+  const { user } = useAuth()
+
+  useEffect(() => {
+    if (user?.onboarded) {
+      router.replace('/dashboard')
+    }
+  }, [user, router])
+
+  if (user === null) return <p>Carregando...</p>
+
+  const queryClient       = useQueryClient()
+  const [error, setError] = useState<string | null>(null)
 
   const mutation = useMutation<Transaction, Error, TransactionInput>({
-    // Aqui fazemos o mapeamento:
+    
     mutationFn: (values) => {
       const { user } = useAuth()
       if (!user) throw new Error('Usuário não autenticado')
       
         const payload: TransactionCreate = {
-        amount: values.amount,
-        date: values.date,
-        description: values.description,
-        category_id: Number(values.categoryId),
-        owner_id: user.id,
+        amount      : values.amount,
+        date        : values.date,
+        description : values.description,
+        category_id : Number(values.categoryId),
+        owner_id    : user.id,
       };
       return createTransaction(payload);
     },

@@ -1,10 +1,23 @@
 // frontend/pages/onboarding/index.tsx
 
-import { useRouter } from 'next/router';
-import { Button } from '../../components/ui/button';
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+
+import { useAuth } from '../../contexts/AuthContext'
+import { Button }  from '../../components/ui/button'
 
 export default function WelcomeScreen() {
-  const router = useRouter();
+  const router  = useRouter()
+  const { user } = useAuth()
+
+  useEffect(() => {
+    if (user?.onboarded) {
+      router.replace('/dashboard')
+    }
+  }, [user, router])
+
+  // opcional: enquanto o user ainda é null (carregando), mostra um loader
+  if (user === null) return <p>Carregando...</p>
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
@@ -18,5 +31,5 @@ export default function WelcomeScreen() {
         Começar
       </Button>
     </div>
-  );
+  )
 }
