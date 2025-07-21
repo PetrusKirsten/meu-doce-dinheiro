@@ -14,7 +14,28 @@ from backend.app.models       import models
 from backend.app.schemas.schemas import MonthlyBalance
 from backend.app.api.routes      import auth
 
-app = FastAPI(title="Meu Doce Dinheiro API")
+app = FastAPI(
+    title           = "Meu Doce Dinheiro API",
+    description     = "API para controle de finanças pessoais com FastAPI, SQLite e JWT.",
+    version         = "0.2.3",
+    servers         = [{"url":"http://localhost:8000","description":"Local"}],
+    contact         = {"name":"Petrus Kirsten","email":"petrus.kirsten@gmail.com"},
+    docs_url        = "/docs",
+    redoc_url       = "/redoc",
+    openapi_url     = "/openapi.json",
+    
+    # openapi_version = "3.1.0",
+    # swagger_ui_parameters={"docExpansion":"none"},
+    # swagger_ui_init_oauth={
+    #     "usePkceWithAuthorizationCodeGrant": True,
+    #     "clientId": "seu-client-id",
+    # }
+    # dependencies=[Depends(oauth2_scheme)],
+    # default_response_class=ORJSONResponse,
+    # terms_of_service="https://meudocedinheiro.com/terms",
+    # license_info={"name":"MIT","url":"https://opensource.org/licenses/MIT"},
+
+)
 
 # ===== CORS (para consumo pelo frontend em http://localhost:3000) =====
 app.add_middleware(
