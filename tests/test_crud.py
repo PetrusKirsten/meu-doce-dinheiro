@@ -1,7 +1,8 @@
 # tests/test_crud.py
 import pytest
 
-from backend.app import crud, models, schemas
+from backend.app import crud, schemas
+from backend.app.models import models
 
 def test_create_and_get_user(db_session):
     # 1) Cria um usuário

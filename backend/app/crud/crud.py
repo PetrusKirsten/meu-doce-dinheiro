@@ -1,12 +1,24 @@
-from . import models, schemas
-
-from fastapi import HTTPException, status
-
 from sqlalchemy     import func
 from sqlalchemy.orm import Session
 
+from fastapi import HTTPException, status
+
+from backend.app.schemas       import schemas
+from backend.app.models        import models
+from backend.app.models.models import User
+from backend.app.core.security import verify_password 
+
 
 # ------ Usuários ------
+
+def authenticate_user(db: Session, email: str, password: str) -> User | None:
+    
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user or not verify_password(password, user.hashed_password):
+        return None
+    
+    return user
 
 def get_user(db      : Session, 
              user_id : int) -> models.User | None:
@@ -57,7 +69,6 @@ def delete_user(db      : Session,
     
     db.delete(user)
     db.commit()
-
 
 def mark_user_onboarded(db      : Session, 
                         user_id : int) -> models.User:

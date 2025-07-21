@@ -4,6 +4,15 @@ from pydantic import BaseModel, ConfigDict
 # -------------------------
 # Schemas para User
 # -------------------------
+
+class LoginIn(BaseModel):
+    email    : str
+    password : str
+
+class TokenOut(BaseModel):
+    access_token : str
+    token_type   : str = "bearer"
+
 class UserBase(BaseModel):
     name  : str
     email : str
@@ -15,7 +24,6 @@ class User(UserBase):
     id        : int
     onboarded : bool
 
-    # substitui class Config
     model_config = ConfigDict(from_attributes=True)
 
 class UserUpdate(BaseModel):

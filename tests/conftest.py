@@ -12,7 +12,7 @@ from sqlalchemy      import create_engine
 from sqlalchemy.orm  import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from backend.app.db     import Base
+from backend.app.database     import Base
 from backend.app.main   import app, get_db
 from fastapi.testclient import TestClient
 

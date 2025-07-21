@@ -31,7 +31,7 @@ criar_tabelas()
 
 # Função para mostrar boas-vindas e informações do aplicativo
 def init_banner():
-    from config import NOME_APP, VERSAO, DESCRICAO, AUTOR
+    from backend.app.core.config import NOME_APP, VERSAO, DESCRICAO, AUTOR
 
     print("\n" + "-"*58)
     print(f"🧾  {NOME_APP.upper()} - v{VERSAO}")

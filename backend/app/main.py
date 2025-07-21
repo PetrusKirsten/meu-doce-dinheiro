@@ -1,14 +1,15 @@
 # backend/app/main.py
 
-from . import db
-from . import models, crud, schemas
-
-from .schemas import MonthlyBalance
-
 from sqlalchemy.orm          import Session
 from fastapi                 import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from .                import database
+from .crud            import crud
+from .schemas         import schemas
+from .models          import models
+from .dependencies    import get_db
+from .schemas.schemas import MonthlyBalance
 
 app = FastAPI(title="Meu Doce Dinheiro API")
 
@@ -20,16 +21,7 @@ app.add_middleware(
     allow_headers = ["*"],
 )
 
-# Garante que as tabelas existam
-models.Base.metadata.create_all(bind=db.engine)
-
-# Dependência para obter a sessão do banco
-def get_db():
-    session = db.SessionLocal()
-    try:
-        yield session
-    finally:
-        session.close()
+models.Base.metadata.create_all(bind=database.engine)
 
 
 # ------ Usuários ------

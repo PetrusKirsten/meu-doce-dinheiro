@@ -1,8 +1,8 @@
-from .db import Base  # importando o declarative_base do db.py
-
 from datetime       import datetime
 from sqlalchemy.orm import relationship
 from sqlalchemy     import Column, Integer, Float, DateTime, String, ForeignKey, Boolean
+
+from ..database import Base
 
 class User(Base):
     __tablename__ = "users"
