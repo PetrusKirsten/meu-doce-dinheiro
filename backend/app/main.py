@@ -1,25 +1,30 @@
 # backend/app/main.py
 
-from sqlalchemy.orm          import Session
 from fastapi                 import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm          import Session
 
-from .                import database
-from .crud            import crud
-from .schemas         import schemas
-from .models          import models
-from .dependencies    import get_db
-from .schemas.schemas import MonthlyBalance
+from backend.app import database
+
+from backend.app.dependencies import get_db
+from backend.app.crud         import crud
+from backend.app.schemas      import schemas
+from backend.app.models       import models
+
+from backend.app.schemas.schemas import MonthlyBalance
+from backend.app.api.routes      import auth
 
 app = FastAPI(title="Meu Doce Dinheiro API")
 
 # ===== CORS (para consumo pelo frontend em http://localhost:3000) =====
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["http://localhost:3000"],  # endereço do Next.js local
-    allow_methods = ["*"],
-    allow_headers = ["*"],
+    allow_origins     = ["http://localhost:3000"],  # endereço do Next.js local
+    allow_credentials = True,
+    allow_methods     = ["*"],
+    allow_headers     = ["*"],
 )
+app.include_router(auth.router)
 
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -35,8 +40,8 @@ def create_user(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 # Get all users
 @app.get("/users/", response_model=list[schemas.User])
 
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_users(db, skip, limit)
+def read_users(db: Session = Depends(get_db)):
+    return db.query(models.User).all()
 
 # Get user by ID
 @app.get("/users/{user_id}", response_model=schemas.User)

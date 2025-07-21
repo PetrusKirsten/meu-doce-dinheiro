@@ -18,17 +18,22 @@ class UserBase(BaseModel):
     email : str
 
 class UserCreate(UserBase):
+    name     : str
+    email    : str
     password : str
-
-class User(UserBase):
-    id        : int
-    onboarded : bool
-
-    model_config = ConfigDict(from_attributes=True)
 
 class UserUpdate(BaseModel):
     name  : str | None = None
     email : str | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+class User(UserBase):
+    id              : int
+    name            : str
+    email           : str
+    hashed_password : str 
+    onboarded       : bool
 
     model_config = ConfigDict(from_attributes=True)
 

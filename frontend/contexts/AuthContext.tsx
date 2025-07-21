@@ -1,7 +1,9 @@
 // frontend/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
 
-const jwtDecode = require('jwt-decode') as (token: string) => any;
+import { parseJwt } from '../utils/jwt'
+
+
 export interface User {
   id: number
   name: string
@@ -39,16 +41,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function login(newToken: string) {
     localStorage.setItem('token', newToken)
     setToken(newToken)
-
-    // opcional: decodifica só pra ter id/email rápido
-    const { sub: id } = jwtDecode(newToken) as { sub: number }
-    // const { sub: id } = jwtDecode(newToken) as { sub: number; email: string }
-        
+    
+    const { sub: id } = parseJwt(newToken)
+    
     // busca o usuário inteiro (incluindo onboarded)
-    const res = await fetch('/api/users/me', {
-      headers: { Authorization: `Bearer ${newToken}` },
-    })
-    if (!res.ok) throw new Error('Falha ao buscar perfil')
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/`, 
+      {
+        headers: { 
+          Authorization : `Bearer ${newToken}`,
+          Accept        : 'application/json'
+        },
+      }
+    )
+
+    if (!res.ok) {
+      console.error('status:', res.status, 'body:', await res.text())
+      throw new Error('Falha ao buscar perfil')
+    }
     const fullUser = (await res.json()) as User
     setUser(fullUser)
   }

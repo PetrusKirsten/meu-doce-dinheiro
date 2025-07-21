@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from backend.app.schemas       import schemas
 from backend.app.models        import models
 from backend.app.models.models import User
-from backend.app.core.security import verify_password 
+from backend.app.core.security import verify_password, get_password_hash
 
 
 # ------ Usuários ------
@@ -31,10 +31,15 @@ def get_users(db    : Session,
     
     return db.query(models.User).offset(skip).limit(limit).all()
 
-def create_user(db      : Session,
-                user_in : schemas.UserCreate) -> models.User:
+def create_user(db: Session, user_in: schemas.UserCreate) -> models.User:
     
-    db_user = models.User(name=user_in.name, email=user_in.email)
+    hashed = get_password_hash(user_in.password)
+
+    db_user = models.User(
+        name            = user_in.name,
+        email           = user_in.email,
+        hashed_password = hashed, )
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

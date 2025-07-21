@@ -4,15 +4,16 @@ from sqlalchemy     import Column, Integer, Float, DateTime, String, ForeignKey,
 
 from ..database import Base
 
+
 class User(Base):
     __tablename__ = "users"
 
     id              = Column(Integer, primary_key=True, index=True)
     name            = Column(String,  unique=True,      index=True)
     email           = Column(String,  unique=True,      index=True)
+    hashed_password = Column(String,  nullable=False)
     onboarded       = Column(Boolean, default=False, nullable=False) 
 
-    # Relacionamento para transações que esse usuário possui
     transactions = relationship("Transaction", back_populates="owner")
 
 

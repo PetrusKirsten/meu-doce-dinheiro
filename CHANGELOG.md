@@ -7,6 +7,25 @@ e usa [SemVer](https://semver.org/lang/pt-BR/) para versionamento.
 
 ---
 
+## [0.2.3] – 2025-07-21
+
+### Added
+
+- Página de **signup** para cadastro de usuários (rota POST /users).
+- Página de **login** com autenticação JWT e armazenamento em AuthContext.
+- Fluxo de **onboarding**: telas Welcome, CategorySetup e FirstTransactionSetup.
+- Middleware de roteamento para liberar `/login`, `/signup`, `/onboarding` e proteger o restante.
+- Guard client-side nos componentes de onboarding que redireciona usuário já onboarded para `/dashboard`.
+- Models, schemas e CRUD atualizados para suportar `hashed_password` (bcrypt) e flag `onboarded` no usuário.
+- Endpoint **GET /users** (debug) incluindo hash da senha para inspecionar credenciais.
+
+### Changed
+
+- Ajuste nos imports TS para caminhos relativos ou configuração de `tsconfig.json`.
+- Centralização das chamadas de API em `frontend/lib/api`.
+
+---
+
 ## [0.2.2] – 2025-07-15
 
 ### Added
