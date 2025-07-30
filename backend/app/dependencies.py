@@ -7,9 +7,10 @@ from sqlalchemy.orm   import Session
 
 from .         import database
 from .database import SessionLocal  
+from .models   import models
 
-from . import crud, core 
-from .models import models
+from .core.config import  SECRET_KEY, ALGORITHM
+from .crud.crud   import get_user 
 
 def get_db():
     session = SessionLocal()
@@ -30,13 +31,13 @@ def get_current_user(
         headers     = {"WWW-Authenticate": "Bearer"},)
     
     try:
-        payload = jwt.decode(token, core.SECRET_KEY, algorithms=[core.ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int = int(payload.get("sub"))
 
     except (JWTError, TypeError, ValueError):
         raise credentials_exception
 
-    user = crud.get_user(db, user_id)
+    user = get_user(db, user_id)
     if not user:
         raise credentials_exception
     

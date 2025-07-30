@@ -6,13 +6,14 @@ from sqlalchemy.orm          import Session
 
 from backend.app import database
 
-from backend.app.dependencies import get_db
+from backend.app.dependencies import get_db, get_current_user
 from backend.app.crud         import crud
 from backend.app.schemas      import schemas
 from backend.app.models       import models
 
-from backend.app.schemas.schemas import MonthlyBalance
 from backend.app.api.routes      import auth
+from backend.app.schemas.schemas import MonthlyBalance, CategoryExpense
+from backend.app.crud.crud       import get_expenses_by_category
 
 app = FastAPI(
     title           = "Meu Doce Dinheiro API",
@@ -140,11 +141,12 @@ def api_delete_category(
 
 # Create a new transaction
 @app.post("/transactions/", response_model=schemas.Transaction)
+
 def create_transaction(
     tx_in : schemas.TransactionCreate,
     db    : Session = Depends(get_db),
-    current_user    = Depends(read_user),
-):
+    current_user    = Depends(read_user)):
+
     # 1) Cria a transação
     txn = crud.create_transaction(db, tx_in, current_user.id)
 
@@ -198,8 +200,14 @@ def api_delete_transaction(
 
 # ------ Relatórios ------
 
-@app.get("/reports/monthly-balance/{year}",
-         response_model=list[MonthlyBalance],
-         tags=["reports"])
+@app.get("/reports/monthly-balance/{year}", response_model=list[MonthlyBalance], tags=["reports"])
 def read_monthly_balance(year: int, db: Session = Depends(get_db)):
     return crud.get_monthly_balance(db, year)
+
+
+@app.get("/reports/expenses-by-category", response_model=list[CategoryExpense], tags=["reports"])
+def read_expenses_by_category(
+    db : Session = Depends(get_db),
+    current_user = Depends(get_current_user),):
+
+    return get_expenses_by_category(db, current_user.id)

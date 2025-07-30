@@ -5,7 +5,7 @@ from fastapi import HTTPException, status
 
 from backend.app.schemas       import schemas
 from backend.app.models        import models
-from backend.app.models.models import User
+from backend.app.models.models import User, Transaction, Category
 from backend.app.core.security import verify_password, get_password_hash
 
 
@@ -20,16 +20,19 @@ def authenticate_user(db: Session, email: str, password: str) -> User | None:
     
     return user
 
+
 def get_user(db      : Session, 
              user_id : int) -> models.User | None:
     
     return db.query(models.User).filter(models.User.id == user_id).first()
+
 
 def get_users(db    : Session,
               skip  : int = 0, 
               limit : int = 100) -> list[models.User]:
     
     return db.query(models.User).offset(skip).limit(limit).all()
+
 
 def create_user(db: Session, user_in: schemas.UserCreate) -> models.User:
     
@@ -45,6 +48,7 @@ def create_user(db: Session, user_in: schemas.UserCreate) -> models.User:
     db.refresh(db_user)
 
     return db_user
+
 
 def update_user(db      : Session,
                 user_id : int,
@@ -65,6 +69,7 @@ def update_user(db      : Session,
 
     return user
 
+
 def delete_user(db      : Session,
                 user_id : int) -> None:
 
@@ -74,6 +79,7 @@ def delete_user(db      : Session,
     
     db.delete(user)
     db.commit()
+
 
 def mark_user_onboarded(db      : Session, 
                         user_id : int) -> models.User:
@@ -92,6 +98,7 @@ def mark_user_onboarded(db      : Session,
 
     return user
 
+
 # ------ Categorias ------
 
 def get_category(db          : Session, 
@@ -99,11 +106,13 @@ def get_category(db          : Session,
     
     return db.query(models.Category).filter(models.Category.id == category_id).first()
 
+
 def get_categories(db    : Session, 
                    skip  : int = 0, 
                    limit : int = 100) -> list[models.Category]:
     
     return db.query(models.Category).offset(skip).limit(limit).all()
+
 
 def create_category(db     : Session, 
                     cat_in : schemas.CategoryCreate) -> models.Category:
@@ -114,6 +123,7 @@ def create_category(db     : Session,
     db.refresh(db_cat)
 
     return db_cat
+
 
 def update_category(db     : Session, 
                     cat_id : int, 
@@ -132,6 +142,7 @@ def update_category(db     : Session,
     db.refresh(cat)
     
     return cat
+
 
 def delete_category(db     : Session, 
                     cat_id : int) -> None:
@@ -160,6 +171,7 @@ def get_transaction(db    : Session,
     
     return db.query(models.Transaction).filter(models.Transaction.id == tx_id).first()
 
+
 def get_transactions(db: Session) -> list[models.Transaction]:
     """
     Retorna apenas transações que ainda têm categoria e usuário válidos.
@@ -171,6 +183,7 @@ def get_transactions(db: Session) -> list[models.Transaction]:
           .filter(models.Transaction.owner_id    != None)   # só pra garantir
           .all()
     )
+
 
 def create_transaction(db      : Session,
                        tx_in   : schemas.TransactionCreate,
@@ -189,6 +202,7 @@ def create_transaction(db      : Session,
 
     return db_tx
 
+
 def update_transaction(db    : Session, 
                        tx_id : int, 
                        data  : schemas.TransactionUpdate) -> models.Transaction:
@@ -206,6 +220,7 @@ def update_transaction(db    : Session,
     db.refresh(tx)
     
     return tx
+
 
 def delete_transaction(db    : Session, 
                        tx_id : int) -> None:
@@ -247,3 +262,16 @@ def get_monthly_balance(db   : Session,
 
     # Converte cada tupla (month, balance) em dict
     return [{"month": m, "balance": b} for m, b in results]
+
+
+def get_expenses_by_category(db: Session, user_id: int) -> list[dict]:
+    # filtra apenas despesas (< 0) do usuário e soma por category_id
+    results = (
+        db.query(Category.name, func.sum(Transaction.amount).label("total"))
+          .join(Transaction, Transaction.category_id == Category.id)
+          .filter(Transaction.owner_id == user_id, Transaction.amount < 0)
+          .group_by(Category.name)
+          .all()
+    )
+    # transforma em lista de dicts { category, total }
+    return [{"category": name, "total": float(total)} for name, total in results]

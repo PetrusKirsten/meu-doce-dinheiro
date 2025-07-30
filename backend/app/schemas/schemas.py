@@ -9,24 +9,29 @@ class LoginIn(BaseModel):
     email    : str
     password : str
 
+
 class TokenOut(BaseModel):
     access_token : str
     token_type   : str = "bearer"
 
+
 class UserBase(BaseModel):
     name  : str
     email : str
+
 
 class UserCreate(UserBase):
     name     : str
     email    : str
     password : str
 
+
 class UserUpdate(BaseModel):
     name  : str | None = None
     email : str | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class User(UserBase):
     id              : int
@@ -41,16 +46,20 @@ class User(UserBase):
 # -------------------------
 # Schemas para Category
 # -------------------------
+
 class CategoryBase(BaseModel):
     name : str
 
+
 class CategoryCreate(CategoryBase):
     pass
+
 
 class Category(CategoryBase):
     id : int
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class CategoryUpdate(BaseModel):
     name: str | None = None
@@ -61,6 +70,7 @@ class CategoryUpdate(BaseModel):
 # -------------------------
 # Schemas para Transaction
 # -------------------------
+
 class TransactionBase(BaseModel):
     amount      : float
     date        : datetime
@@ -68,13 +78,16 @@ class TransactionBase(BaseModel):
     category_id : int
     owner_id    : int
 
+
 class TransactionCreate(TransactionBase):
     pass
+
 
 class Transaction(TransactionBase):
     id : int
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class TransactionUpdate(BaseModel):
     amount      : float | None = None
@@ -89,9 +102,17 @@ class TransactionUpdate(BaseModel):
 # -------------------------
 # Schemas para relatórios
 # -------------------------
+
 class MonthlyBalance(BaseModel):
     month   : str    # ex. "2025-01"
     balance : float
 
     model_config = ConfigDict(from_attributes=True)
+
+class CategoryExpense(BaseModel):
+    category : str
+    total    : float
+
+    class Config:
+        orm_mode = True
 
